@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Mail, Lock, Eye, EyeOff, ArrowRight, FileText, FolderSearch, Scale } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -26,131 +26,230 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left brand panel */}
-      <div className="hidden md:flex w-[42%] relative flex-col justify-between p-12 overflow-hidden"
+
+      {/* ── Left brand panel — Kimi warm light ── */}
+      <div className="hidden md:flex w-[46%] relative flex-col justify-between overflow-hidden"
         style={{ background: 'var(--bg-base)' }}>
-        {/* Radial gradient overlay */}
-        <div className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'radial-gradient(ellipse 80% 60% at 25% 55%, rgba(108,92,231,0.15), transparent), radial-gradient(circle at 10% 90%, rgba(0,184,148,0.06), transparent 50%)'
+
+        {/* Floating blur cards — background decoration */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Top right blob */}
+          <div style={{
+            position: 'absolute', top: '-10%', right: '-8%',
+            width: '55%', height: '55%',
+            background: 'linear-gradient(135deg, rgba(55,122,255,0.12) 0%, rgba(107,158,255,0.06) 100%)',
+            borderRadius: '50%',
+            filter: 'blur(60px)',
           }} />
-
-        {/* Logo */}
-        <div className="relative flex items-center gap-2.5 animate-blur-in">
-          <div className="w-8 h-8 rounded-lg" style={{ background: 'linear-gradient(135deg, var(--accent-600), var(--accent-700))' }} />
-          <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>LinkMai</span>
+          {/* Bottom left blob */}
+          <div style={{
+            position: 'absolute', bottom: '5%', left: '-10%',
+            width: '45%', height: '45%',
+            background: 'linear-gradient(135deg, rgba(55,122,255,0.08) 0%, rgba(107,158,255,0.03) 100%)',
+            borderRadius: '50%',
+            filter: 'blur(50px)',
+          }} />
+          {/* Floating card 1 */}
+          <div className="absolute" style={{
+            top: '22%', right: '8%',
+            width: 180, height: 90,
+            background: 'rgba(255,255,255,0.7)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            borderRadius: 16,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+            border: '1px solid rgba(255,255,255,0.6)',
+          }} />
+          {/* Floating card 2 */}
+          <div className="absolute" style={{
+            bottom: '28%', left: '5%',
+            width: 160, height: 80,
+            background: 'rgba(255,255,255,0.6)',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            borderRadius: 14,
+            boxShadow: '0 6px 24px rgba(0,0,0,0.06)',
+            border: '1px solid rgba(255,255,255,0.5)',
+          }} />
         </div>
 
-        {/* Slogan */}
-        <div className="relative animate-fade-up">
-          <h1 className="text-[28px] font-semibold leading-tight" style={{ color: 'var(--text-primary)' }}>
-            法有据，智无界
-          </h1>
-          <p className="mt-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
-            AI 驱动的律师工作平台
-          </p>
-          <div className="mt-8 space-y-3">
-            {[
-              { icon: FileText, text: '文书智能起草' },
-              { icon: FolderSearch, text: '案件流程管理' },
-              { icon: Scale, text: '法条数据库检索' },
-            ].map((item, i) => (
-              <div key={i} className={`flex items-center gap-3 animate-fade-up stagger-${i + 1}`}>
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ background: 'rgba(108,92,231,0.10)' }}>
-                  <item.icon className="w-4 h-4" style={{ color: 'var(--accent-400)' }} />
-                </div>
-                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{item.text}</span>
-              </div>
-            ))}
+        {/* Content */}
+        <div className="relative z-10 flex flex-col justify-between h-full p-16">
+          {/* Logo */}
+          <div className="flex items-center gap-3 animate-blur-in">
+            <div className="w-10 h-10 rounded-2xl flex items-center justify-center"
+              style={{
+                background: 'linear-gradient(135deg, #377AFF, #6b9eff)',
+                boxShadow: '0 4px 16px rgba(55,122,255,0.3)',
+              }}>
+              <span className="text-white font-bold text-base tracking-wide">L</span>
+            </div>
+            <span className="text-base font-semibold tracking-wide" style={{ color: 'var(--text-primary)' }}>LinkMai</span>
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="relative">
-          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>&copy; 2026 LinkMai</p>
+          {/* Slogan — hero */}
+          <div className="space-y-3">
+            <h1 className="text-5xl font-bold leading-tight tracking-tight animate-fade-up"
+              style={{
+                color: 'var(--text-primary)',
+                background: 'linear-gradient(135deg, #377AFF 0%, #6b9eff 50%, #377AFF 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}>
+              法有据 · 智无界
+            </h1>
+            <p className="text-base animate-fade-up stagger-1" style={{ color: 'var(--text-secondary)' }}>
+              AI 驱动的律师工作平台
+            </p>
+
+            {/* Feature list */}
+            <div className="space-y-3 pt-4 animate-fade-up stagger-2">
+              {[
+                '文书智能起草',
+                '案件流程管理',
+                '法条数据库检索',
+              ].map((text, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                    style={{ background: 'var(--accent-dim)' }}>
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent-500)' }} />
+                  </div>
+                  <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <p className="text-xs animate-fade-up stagger-3" style={{ color: 'var(--text-tertiary)' }}>
+            &copy; 2026 LinkMai · 法律 AI 工作平台
+          </p>
         </div>
       </div>
 
-      {/* Right form panel */}
-      <div className="flex-1 flex items-center justify-center p-8"
+      {/* ── Right form panel — Kimi clean white ── */}
+      <div className="flex-1 flex items-center justify-center"
         style={{ background: 'var(--bg-surface)' }}>
-        <div className="w-full max-w-[400px] animate-fade-up">
-          {/* Mobile logo */}
-          <div className="flex items-center gap-2 mb-10 md:mb-10">
-            <div className="w-5 h-5 rounded-md" style={{ background: 'linear-gradient(135deg, var(--accent-600), var(--accent-700))' }} />
-            <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>LinkMai</span>
+        <div className="w-full max-w-[400px] px-10">
+
+          {/* Logo */}
+          <div className="flex items-center gap-2.5 mb-10">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center"
+              style={{
+                background: 'linear-gradient(135deg, #377AFF, #6b9eff)',
+                boxShadow: '0 3px 12px rgba(55,122,255,0.25)',
+              }}>
+              <span className="text-white font-bold text-sm">L</span>
+            </div>
+            <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>LinkMai</span>
           </div>
 
-          <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>欢迎回来</h2>
-          <p className="text-[13px] mt-1.5" style={{ color: 'var(--text-secondary)' }}>登录到你的律师工作台</p>
+          {/* Heading */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>欢迎回来</h2>
+            <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>登录到你的律师工作台</p>
+          </div>
 
-          <form onSubmit={handleLogin} className="mt-7 space-y-4">
-            {/* Email */}
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-tertiary)' }} />
-              <input
-                type="email" value={email} onChange={e => setEmail(e.target.value)} required
-                className="input-base" style={{ paddingLeft: 36 }}
-                placeholder="your@email.com"
-              />
+          {/* Form */}
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>邮箱地址</label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+                  style={{ color: 'var(--text-tertiary)' }} />
+                <input
+                  type="email" value={email} onChange={e => setEmail(e.target.value)} required
+                  className="input-base" style={{ paddingLeft: 40, height: 48 }}
+                  placeholder="your@email.com"
+                />
+              </div>
             </div>
 
-            {/* Password */}
-            <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-tertiary)' }} />
-              <input
-                type={showPw ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} required
-                className="input-base" style={{ paddingLeft: 36, paddingRight: 40 }}
-                placeholder="输入密码"
-              />
-              <button type="button" onClick={() => setShowPw(!showPw)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5"
-                style={{ color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}>
-                {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
+            <div>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>密码</label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+                  style={{ color: 'var(--text-tertiary)' }} />
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  value={password} onChange={e => setPassword(e.target.value)} required
+                  className="input-base" style={{ paddingLeft: 40, paddingRight: 44, height: 48 }}
+                  placeholder="输入密码"
+                />
+                <button type="button" onClick={() => setShowPw(!showPw)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md"
+                  style={{ color: 'var(--text-tertiary)' }}>
+                  {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
-            {/* Remember / Forgot */}
+            {/* Remember + forgot */}
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-xs cursor-pointer" style={{ color: 'var(--text-tertiary)' }}>
-                <input type="checkbox" className="w-3.5 h-3.5 rounded accent-[var(--accent-600)]" />
-                记住登录
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <div className="w-4 h-4 rounded flex items-center justify-center"
+                  style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)' }}>
+                  <input type="checkbox" className="sr-only" />
+                </div>
+                <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>记住登录状态</span>
               </label>
-              <span className="text-xs cursor-pointer" style={{ color: 'var(--accent-400)' }}>忘记密码？</span>
+              <button type="button" className="text-xs"
+                style={{ color: 'var(--accent-500)' }}>
+                忘记密码？
+              </button>
             </div>
 
             {/* Error */}
             {error && (
-              <div className="status-pill danger text-xs">{error}</div>
+              <div className="px-4 py-3 rounded-xl text-sm"
+                style={{ background: 'var(--danger-bg)', color: 'var(--danger)', border: '1px solid rgba(220,38,38,0.12)' }}>
+                {error}
+              </div>
             )}
 
             {/* Submit */}
-            <button type="submit" disabled={loading} className="btn-primary w-full">
-              {loading ? '登录中...' : <>登录工作台 <ArrowRight className="w-4 h-4" /></>}
+            <button type="submit" disabled={loading} className="btn-primary w-full" style={{ height: 48, marginTop: 4 }}>
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full border-2 border-t-transparent spin"
+                    style={{ borderColor: '#fff', borderTopColor: 'transparent' }} />
+                  登录中...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  登录工作台
+                  <ArrowRight className="w-4 h-4" />
+                </span>
+              )}
             </button>
           </form>
 
           {/* Divider */}
           <div className="flex items-center gap-3 my-7">
             <div className="flex-1 h-px" style={{ background: 'var(--border-default)' }} />
-            <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>或使用其他方式</span>
+            <span className="text-xs px-1" style={{ color: 'var(--text-tertiary)' }}>其他登录方式</span>
             <div className="flex-1 h-px" style={{ background: 'var(--border-default)' }} />
           </div>
 
-          {/* Third-party login */}
+          {/* SSO */}
           <div className="flex gap-3">
-            <button className="btn-outline flex-1 text-xs">企业微信</button>
-            <button className="btn-outline flex-1 text-xs">钉钉</button>
+            <button className="btn-outline flex-1" style={{ height: 44 }}>企业微信</button>
+            <button className="btn-outline flex-1" style={{ height: 44 }}>钉钉</button>
           </div>
 
-          {/* Register link */}
-          <p className="mt-8 text-center text-xs" style={{ color: 'var(--text-tertiary)' }}>
-            还没有账户？{' '}
-            <Link href="/register" className="font-medium" style={{ color: 'var(--accent-400)' }}>联系管理员开通</Link>
+          {/* Register */}
+          <p className="mt-8 text-center text-sm" style={{ color: 'var(--text-tertiary)' }}>
+            还没有账户？
+            <Link href="/register"
+              className="font-medium ml-1"
+              style={{ color: 'var(--accent-500)' }}>
+              联系管理员开通
+            </Link>
           </p>
         </div>
       </div>
+
     </div>
   )
 }
