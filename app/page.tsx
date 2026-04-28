@@ -143,8 +143,15 @@ export default function LandingPage() {
             <path d="M15 23 L25 23" stroke="white" strokeWidth="2" strokeLinecap="round"/>
             <circle cx="20" cy="12" r="2" fill="white"/>
           </svg>
-          <span style={{ fontSize: 14, fontWeight: 700, letterSpacing: '0.02em', color: '#fff' }}>
-            灵迈 <span style={{ color: 'rgba(255,255,255,0.45)', fontWeight: 400 }}>Linkmai</span>
+          <span style={{
+            fontSize: 14, fontWeight: 700, letterSpacing: '0.02em',
+            color: 'transparent',
+            backgroundImage: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.85) 100%)',
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+            filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.25))',
+          }}>
+            灵迈 <span style={{ fontWeight: 400, opacity: 0.55 }}>Linkmai</span>
           </span>
         </div>
 
