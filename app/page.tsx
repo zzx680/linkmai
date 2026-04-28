@@ -196,7 +196,11 @@ export default function LandingPage() {
             lineHeight: 1.05,
             letterSpacing: '-0.025em',
             marginBottom: 20,
-            color: '#ffffff',
+            color: 'transparent',
+            backgroundImage: 'linear-gradient(160deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.75) 40%, rgba(255,255,255,0.55) 70%, rgba(255,255,255,0.85) 100%)',
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+            filter: 'drop-shadow(0 0 40px rgba(255,255,255,0.18)) drop-shadow(0 2px 12px rgba(255,255,255,0.1))',
           }}>
             灵迈Linkmai
           </h1>
