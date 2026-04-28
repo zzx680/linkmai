@@ -3,7 +3,7 @@ import { getCaseById } from '@/lib/data/cases'
 import { getDocumentsByCase } from '@/lib/data/documents'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { FileText, Zap, ArrowLeft, Plus, Clock, ChevronRight } from 'lucide-react'
+import { FileText, Zap, ArrowLeft, Plus, Clock, ChevronRight, Scale, Search, Folder } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,135 +43,166 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ cas
   const caseSt = STATUS_CONFIG[caseData.status] || STATUS_CONFIG.active
 
   return (
-    <div className="flex h-screen" style={{ background: 'var(--bg-base)' }}>
+    <div style={{ display: 'flex', height: '100vh', background: '#f5f6fa', fontFamily: "-apple-system,'PingFang SC','Helvetica Neue',system-ui,sans-serif" }}>
+
       {/* Sidebar */}
-      <aside className="w-[240px] flex flex-col shrink-0"
-        style={{ background: 'var(--bg-surface)', borderRight: '1px solid var(--border-subtle)' }}>
-        <div className="px-5 py-5 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg" style={{ background: 'linear-gradient(135deg, var(--accent-600), var(--accent-700))' }} />
-          <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>LinkMai</span>
-        </div>
-
-        <div className="px-4 pb-3">
-          <Link href="/cases" className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg transition-colors"
-            style={{ color: 'var(--text-secondary)' }}>
-            <ArrowLeft className="w-3.5 h-3.5" />
-            所有案件
-          </Link>
-        </div>
-
-        <div className="px-4 pb-4" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-          <p className="text-xs font-semibold leading-snug" style={{ color: 'var(--text-primary)' }}>{caseData.title}</p>
-          <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>{CASE_TYPE_LABELS[caseData.case_type]}</p>
-        </div>
-
-        <nav className="flex-1 px-3 pt-3 space-y-0.5">
-          <div className="nav-item active">
-            <FileText className="w-4 h-4 shrink-0" />
-            <span>文书列表</span>
+      <aside style={{ width: 220, display: 'flex', flexDirection: 'column', background: '#fff', borderRight: '1px solid #ebebf0', flexShrink: 0 }}>
+        <div style={{ padding: '20px 20px 16px', display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid #f0f0f5' }}>
+          <div style={{ width: 30, height: 30, borderRadius: 8, background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <svg width="16" height="16" viewBox="0 0 40 40" fill="none">
+              <path d="M12 28 L20 12 L28 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+              <path d="M15 23 L25 23" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
           </div>
-          <Link href={`/cases/${caseId}/workspace`} className="nav-item">
-            <Zap className="w-4 h-4 shrink-0" />
-            <span>AI 工作台</span>
+          <span style={{ fontSize: 15, fontWeight: 700, color: '#111', letterSpacing: '-0.01em' }}>Linkmai</span>
+        </div>
+
+        <nav style={{ flex: 1, padding: '12px 10px' }}>
+          <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.06em', padding: '4px 10px 8px', textTransform: 'uppercase' as const }}>工作台</p>
+          <Link href="/cases" style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 8, marginBottom: 2, fontSize: 13, fontWeight: 600, color: '#111', background: '#f0f0f5', textDecoration: 'none' }}>
+            <Folder size={15} />案件管理
           </Link>
+          <Link href="/search" style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 8, marginBottom: 2, fontSize: 13, color: '#888', textDecoration: 'none' }}>
+            <Search size={15} />法律检索
+          </Link>
+
+          <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid #f0f0f5' }}>
+            <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.06em', padding: '0 10px 8px', textTransform: 'uppercase' as const }}>当前案件</p>
+            <div style={{ padding: '8px 10px', borderRadius: 8, background: '#f8f8fb' }}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: '#111', lineHeight: 1.4, marginBottom: 4 }}>{caseData.title}</p>
+              <p style={{ fontSize: 11, color: '#aaa' }}>{CASE_TYPE_LABELS[caseData.case_type]}</p>
+            </div>
+            <div style={{ marginTop: 8 }}>
+              <Link href={`/cases/${caseId}`} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 8, marginBottom: 2, fontSize: 13, fontWeight: 600, color: '#111', background: '#f0f0f5', textDecoration: 'none' }}>
+                <FileText size={15} />文书列表
+              </Link>
+              <Link href={`/cases/${caseId}/workspace`} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 8, fontSize: 13, color: '#888', textDecoration: 'none' }}>
+                <Zap size={15} />AI 工作台
+              </Link>
+            </div>
+          </div>
         </nav>
       </aside>
 
       {/* Main */}
-      <main className="flex-1 overflow-auto">
-        <div className="max-w-3xl mx-auto px-8 py-8">
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+
+        {/* Header */}
+        <header style={{ height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', background: '#fff', borderBottom: '1px solid #ebebf0', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Scale size={15} style={{ color: '#aaa' }} />
+            <Link href="/cases" style={{ fontSize: 13, color: '#aaa', textDecoration: 'none' }}>案件管理</Link>
+            <span style={{ fontSize: 13, color: '#ccc', margin: '0 2px' }}>/</span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>{caseData.title}</span>
+          </div>
+          <Link href={`/cases/${caseId}/workspace`} style={{ display: 'flex', alignItems: 'center', gap: 6, height: 34, padding: '0 16px', borderRadius: 8, background: '#111', color: '#fff', fontSize: 13, fontWeight: 500, textDecoration: 'none' }}>
+            <Zap size={14} />
+            打开 AI 工作台
+          </Link>
+        </header>
+
+        <main style={{ flex: 1, overflow: 'auto', padding: 28 }}>
+
           {/* Case info card */}
-          <div className="rounded-[var(--radius-lg)] p-6 mb-6 animate-fade-up"
-            style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-card)' }}>
-            <div className="flex items-start justify-between mb-4">
-              <h1 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{caseData.title}</h1>
-              <span className={`status-pill ${caseSt.pill} ml-4`}>{caseSt.label}</span>
+          <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #ebebf0', padding: '22px 24px', marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 18 }}>
+              <div>
+                <h1 style={{ fontSize: 18, fontWeight: 700, color: '#111', marginBottom: 4 }}>{caseData.title}</h1>
+                <span style={{ fontSize: 12, color: '#888', background: '#f5f5f8', padding: '3px 8px', borderRadius: 6 }}>{CASE_TYPE_LABELS[caseData.case_type]}</span>
+              </div>
+              <span className={`status-pill ${caseSt.pill}`}>{caseSt.label}</span>
             </div>
-            <div className="grid grid-cols-2 gap-3 text-sm">
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px 24px' }}>
               {[
-                { label: '案件类型', value: CASE_TYPE_LABELS[caseData.case_type] },
                 { label: '当事人', value: caseData.client_name },
                 { label: '对方当事人', value: caseData.opponent },
                 { label: '受理法院', value: caseData.court },
                 { label: '案号', value: caseData.case_number },
               ].filter(f => f.value).map(f => (
                 <div key={f.label}>
-                  <span style={{ color: 'var(--text-tertiary)' }}>{f.label}：</span>
-                  <span style={{ color: 'var(--text-secondary)' }}>{f.value}</span>
+                  <p style={{ fontSize: 11, color: '#aaa', marginBottom: 3 }}>{f.label}</p>
+                  <p style={{ fontSize: 13, color: '#333', fontWeight: 500 }}>{f.value}</p>
                 </div>
               ))}
             </div>
+
             {caseData.description && (
-              <p className="mt-4 text-sm pt-4" style={{ color: 'var(--text-secondary)', borderTop: '1px solid var(--border-subtle)' }}>
-                {caseData.description}
-              </p>
+              <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid #f0f0f5' }}>
+                <p style={{ fontSize: 11, color: '#aaa', marginBottom: 6 }}>案情摘要</p>
+                <p style={{ fontSize: 13, color: '#555', lineHeight: 1.7 }}>{caseData.description}</p>
+              </div>
             )}
-            <div className="mt-5">
-              <Link href={`/cases/${caseId}/workspace`} className="btn-primary inline-flex items-center gap-2">
-                <Zap className="w-4 h-4" />
-                打开 AI 工作台
-              </Link>
-            </div>
           </div>
 
           {/* Documents */}
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>文书 ({documents.length})</h2>
-            <Link href={`/cases/${caseId}/workspace`}
-              className="flex items-center gap-1 text-xs transition-colors"
-              style={{ color: 'var(--accent-400)' }}>
-              <Plus className="w-3.5 h-3.5" />
-              AI 起草
-            </Link>
-          </div>
-
-          {documents.length === 0 ? (
-            <div className="text-center py-16 rounded-[var(--radius-lg)] animate-fade-up"
-              style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-card)' }}>
-              <div className="w-12 h-12 rounded-[var(--radius-md)] mx-auto mb-3 flex items-center justify-center"
-                style={{ background: 'var(--bg-elevated)' }}>
-                <FileText className="w-5 h-5" style={{ color: 'var(--text-tertiary)' }} />
-              </div>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>暂无文书</p>
-              <Link href={`/cases/${caseId}/workspace`} className="text-xs mt-2 inline-block" style={{ color: 'var(--accent-400)' }}>
-                前往 AI 工作台起草
+          <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #ebebf0', overflow: 'hidden' }}>
+            <div style={{ padding: '14px 20px', borderBottom: '1px solid #f0f0f5', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>文书列表</span>
+              <Link href={`/cases/${caseId}/workspace`} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#2563eb', textDecoration: 'none' }}>
+                <Plus size={13} />AI 起草
               </Link>
             </div>
-          ) : (
-            <div className="space-y-2">
-              {documents.map((doc, i) => {
-                const docSt = DOC_STATUS_CONFIG[doc.status] || DOC_STATUS_CONFIG.draft
-                return (
-                  <Link key={doc.id} href={`/cases/${caseId}/documents/${doc.id}`}
-                    className={`card-hover flex items-center justify-between px-5 py-3.5 animate-fade-up stagger-${Math.min(i + 1, 5)}`}>
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
-                        style={{ background: 'rgba(108,92,231,0.10)' }}>
-                        <FileText className="w-3.5 h-3.5" style={{ color: 'var(--accent-400)' }} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>{doc.title}</p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{DOC_TYPE_LABELS[doc.doc_type]}</span>
-                          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>v{doc.current_version}</span>
-                          <span className="flex items-center gap-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                            <Clock className="w-3 h-3" />
+
+            {documents.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '48px 20px' }}>
+                <div style={{ width: 44, height: 44, borderRadius: 10, background: '#f5f5f8', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
+                  <FileText size={18} style={{ color: '#ccc' }} />
+                </div>
+                <p style={{ fontSize: 13, color: '#aaa' }}>暂无文书</p>
+                <Link href={`/cases/${caseId}/workspace`} style={{ fontSize: 12, color: '#2563eb', textDecoration: 'none', marginTop: 6, display: 'inline-block' }}>前往 AI 工作台起草</Link>
+              </div>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: '#fafafa' }}>
+                    {['文书名称', '类型', '版本', '更新时间', '状态', ''].map(h => (
+                      <th key={h} style={{ padding: '10px 20px', textAlign: 'left', fontSize: 12, fontWeight: 500, color: '#aaa', borderBottom: '1px solid #f0f0f5' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {documents.map((doc) => {
+                    const docSt = DOC_STATUS_CONFIG[doc.status] || DOC_STATUS_CONFIG.draft
+                    return (
+                      <tr key={doc.id}
+                        style={{ borderBottom: '1px solid #f5f5f8', cursor: 'pointer', transition: 'background 0.1s' }}
+                        onMouseEnter={e => (e.currentTarget.style.background = '#fafafa')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                        onClick={() => window.location.href = `/cases/${caseId}/documents/${doc.id}`}>
+                        <td style={{ padding: '13px 20px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <div style={{ width: 30, height: 30, borderRadius: 7, background: '#f0f4ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                              <FileText size={13} style={{ color: '#2563eb' }} />
+                            </div>
+                            <span style={{ fontSize: 13, fontWeight: 500, color: '#111' }}>{doc.title}</span>
+                          </div>
+                        </td>
+                        <td style={{ padding: '13px 20px' }}>
+                          <span style={{ fontSize: 12, color: '#888', background: '#f5f5f8', padding: '3px 8px', borderRadius: 6 }}>{DOC_TYPE_LABELS[doc.doc_type]}</span>
+                        </td>
+                        <td style={{ padding: '13px 20px', fontSize: 12, color: '#aaa' }}>v{doc.current_version}</td>
+                        <td style={{ padding: '13px 20px' }}>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#aaa' }}>
+                            <Clock size={12} />
                             {new Date(doc.updated_at).toLocaleDateString('zh-CN')}
                           </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <span className={`status-pill ${docSt.pill}`}>{docSt.label}</span>
-                      <ChevronRight className="w-4 h-4" style={{ color: 'var(--text-tertiary)' }} />
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
-          )}
-        </div>
-      </main>
+                        </td>
+                        <td style={{ padding: '13px 20px' }}>
+                          <span className={`status-pill ${docSt.pill}`}>{docSt.label}</span>
+                        </td>
+                        <td style={{ padding: '13px 20px' }}>
+                          <ChevronRight size={15} style={{ color: '#ccc' }} />
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </main>
+      </div>
     </div>
   )
 }

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import {
   ArrowLeft, FileText, Zap, Search, Send, Loader2, X,
-  Sparkles, ChevronDown, ChevronUp, Scale
+  Sparkles, ChevronDown, ChevronUp, Scale, Folder
 } from 'lucide-react'
 import type { Case, Document, StreamChunk } from '@/lib/types'
 
@@ -139,135 +139,142 @@ export default function WorkspaceClient({ caseData, initialDocuments }: Props) {
   }
 
   return (
-    <div className="flex h-screen" style={{ background: 'var(--bg-base)' }}>
-      {/* Left sidebar: case context */}
-      <aside className="w-[240px] flex flex-col shrink-0"
-        style={{ background: 'var(--bg-surface)', borderRight: '1px solid var(--border-subtle)' }}>
-        <div className="px-5 py-5 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg" style={{ background: 'linear-gradient(135deg, var(--accent-600), var(--accent-700))' }} />
-          <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>LinkMai</span>
+    <div style={{ display: 'flex', height: '100vh', background: '#f5f6fa', fontFamily: "-apple-system,'PingFang SC','Helvetica Neue',system-ui,sans-serif" }}>
+
+      {/* Left sidebar */}
+      <aside style={{ width: 220, display: 'flex', flexDirection: 'column', background: '#fff', borderRight: '1px solid #ebebf0', flexShrink: 0 }}>
+        {/* Logo */}
+        <div style={{ padding: '20px 20px 16px', display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid #f0f0f5' }}>
+          <div style={{ width: 30, height: 30, borderRadius: 8, background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <svg width="16" height="16" viewBox="0 0 40 40" fill="none">
+              <path d="M12 28 L20 12 L28 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+              <path d="M15 23 L25 23" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <span style={{ fontSize: 15, fontWeight: 700, color: '#111', letterSpacing: '-0.01em' }}>Linkmai</span>
         </div>
 
-        <div className="px-4 pb-2">
-          <Link href={`/cases/${caseData.id}`}
-            className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-[var(--radius-md)] transition-colors"
-            style={{ color: 'var(--text-secondary)' }}>
-            <ArrowLeft className="w-3.5 h-3.5" />
-            返回案件
+        <div style={{ padding: '10px 10px 4px' }}>
+          <Link href={`/cases/${caseData.id}`} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '7px 10px', borderRadius: 8, fontSize: 12, color: '#888', textDecoration: 'none' }}
+            onMouseEnter={e => e.currentTarget.style.background = '#f5f5f8'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+            <ArrowLeft size={13} />返回案件
           </Link>
         </div>
 
-        {/* Case info collapsible */}
-        <div className="px-3 pb-2">
-          <button
-            onClick={() => setCaseExpanded(!caseExpanded)}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-[var(--radius-md)] text-xs font-medium"
-            style={{ color: 'var(--text-secondary)' }}>
-            <span className="flex items-center gap-1.5">
-              <Scale className="w-3.5 h-3.5" style={{ color: 'var(--accent-400)' }} />
-              案件信息
+        {/* Case info */}
+        <div style={{ padding: '0 10px 10px' }}>
+          <button onClick={() => setCaseExpanded(!caseExpanded)}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '7px 10px', borderRadius: 8, border: 'none', background: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, color: '#555' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Scale size={13} style={{ color: '#2563eb' }} />案件信息
             </span>
-            {caseExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            {caseExpanded ? <ChevronUp size={12} style={{ color: '#bbb' }} /> : <ChevronDown size={12} style={{ color: '#bbb' }} />}
           </button>
           {caseExpanded && (
-            <div className="mt-1.5 px-2.5 space-y-1.5">
-              <p className="text-xs font-medium leading-snug" style={{ color: 'var(--text-primary)' }}>{caseData.title}</p>
-              {caseData.client_name && <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>当事人：{caseData.client_name}</p>}
-              {caseData.opponent && <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>对方：{caseData.opponent}</p>}
-              {caseData.court && <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>法院：{caseData.court}</p>}
-              {caseData.description && (
-                <p className="text-xs line-clamp-3 mt-1.5" style={{ color: 'var(--text-tertiary)' }}>{caseData.description}</p>
-              )}
+            <div style={{ padding: '6px 10px 4px', background: '#f8f8fb', borderRadius: 8, marginTop: 4 }}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: '#111', lineHeight: 1.4, marginBottom: 6 }}>{caseData.title}</p>
+              {caseData.client_name && <p style={{ fontSize: 11, color: '#aaa', marginBottom: 3 }}>当事人：{caseData.client_name}</p>}
+              {caseData.opponent && <p style={{ fontSize: 11, color: '#aaa', marginBottom: 3 }}>对方：{caseData.opponent}</p>}
+              {caseData.court && <p style={{ fontSize: 11, color: '#aaa', marginBottom: 3 }}>法院：{caseData.court}</p>}
+              {caseData.description && <p style={{ fontSize: 11, color: '#bbb', lineHeight: 1.5, marginTop: 6, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' as const, overflow: 'hidden' }}>{caseData.description}</p>}
             </div>
           )}
         </div>
 
-        {/* Documents */}
-        <div className="flex-1 overflow-auto px-3 pt-2" style={{ borderTop: '1px solid var(--border-subtle)' }}>
-          <p className="text-xs font-medium px-2.5 py-2" style={{ color: 'var(--text-secondary)' }}>
-            文书 ({documents.length})
-          </p>
+        {/* Documents list */}
+        <div style={{ flex: 1, overflow: 'auto', padding: '0 10px', borderTop: '1px solid #f0f0f5' }}>
+          <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.06em', padding: '10px 10px 6px', textTransform: 'uppercase' as const }}>文书 ({documents.length})</p>
           {documents.length === 0 ? (
-            <p className="text-xs px-2.5" style={{ color: 'var(--text-tertiary)' }}>暂无文书</p>
+            <p style={{ fontSize: 12, color: '#ccc', padding: '0 10px' }}>暂无文书</p>
           ) : (
-            <div className="space-y-0.5">
-              {documents.map(doc => (
-                <Link key={doc.id} href={`/cases/${caseData.id}/documents/${doc.id}`}
-                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-[var(--radius-md)] text-xs transition-colors"
-                  style={{ color: 'var(--text-secondary)' }}>
-                  <FileText className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--accent-400)' }} />
-                  <span className="truncate">{doc.title}</span>
-                </Link>
-              ))}
-            </div>
+            documents.map(doc => (
+              <Link key={doc.id} href={`/cases/${caseData.id}/documents/${doc.id}`}
+                style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 10px', borderRadius: 8, fontSize: 12, color: '#666', textDecoration: 'none', marginBottom: 1 }}
+                onMouseEnter={e => e.currentTarget.style.background = '#f5f5f8'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                <FileText size={13} style={{ color: '#2563eb', flexShrink: 0 }} />
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{doc.title}</span>
+              </Link>
+            ))
           )}
+        </div>
+
+        {/* Nav */}
+        <div style={{ padding: '10px', borderTop: '1px solid #f0f0f5' }}>
+          <Link href="/cases" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 10px', borderRadius: 8, fontSize: 12, color: '#888', textDecoration: 'none' }}
+            onMouseEnter={e => e.currentTarget.style.background = '#f5f5f8'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+            <Folder size={13} />所有案件
+          </Link>
         </div>
       </aside>
 
       {/* Center: Chat */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'hidden' }}>
+
         {/* Top bar */}
-        <div className="flex items-center justify-between px-5 py-3 shrink-0"
-          style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)' }}>
-          <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4" style={{ color: 'var(--accent-400)' }} />
-            <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>AI 工作台</span>
+        <header style={{ height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', background: '#fff', borderBottom: '1px solid #ebebf0', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Zap size={15} style={{ color: '#2563eb' }} />
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>AI 工作台</span>
+            <span style={{ fontSize: 12, color: '#ccc', margin: '0 4px' }}>·</span>
+            <span style={{ fontSize: 12, color: '#aaa' }}>{caseData.title}</span>
           </div>
-          <div className="flex gap-1 p-1 rounded-[var(--radius-md)]" style={{ background: 'var(--bg-elevated)' }}>
+          {/* Mode toggle */}
+          <div style={{ display: 'flex', gap: 2, padding: 3, borderRadius: 8, background: '#f0f0f5' }}>
             {([
               { key: 'draft', icon: FileText, label: '起草文书' },
               { key: 'search', icon: Search, label: '法律检索' },
             ] as const).map(({ key, icon: Icon, label }) => (
               <button key={key} onClick={() => setMode(key)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-medium"
                 style={{
-                  background: mode === key ? 'var(--accent-600)' : 'transparent',
-                  color: mode === key ? '#fff' : 'var(--text-secondary)',
+                  display: 'flex', alignItems: 'center', gap: 5, padding: '5px 12px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: mode === key ? 600 : 400,
+                  background: mode === key ? '#fff' : 'transparent',
+                  color: mode === key ? '#111' : '#888',
+                  boxShadow: mode === key ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                  transition: 'all 0.15s',
                 }}>
-                <Icon className="w-3.5 h-3.5" />
+                <Icon size={13} />
                 {label}
               </button>
             ))}
           </div>
-        </div>
+        </header>
 
         {/* Messages */}
-        <div className="flex-1 overflow-auto px-5 py-5 space-y-4">
+        <div style={{ flex: 1, overflow: 'auto', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
           {messages.map(msg => (
-            <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-up`}>
+            <div key={msg.id} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
               {msg.role === 'system' ? (
-                <div className="w-full max-w-2xl px-4 py-3 rounded-[var(--radius-lg)] text-sm"
-                  style={{ background: 'var(--bg-elevated)', color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ width: '100%', maxWidth: 640, padding: '12px 16px', borderRadius: 10, background: '#f5f6fa', border: '1px solid #ebebf0', fontSize: 13, color: '#666', lineHeight: 1.7 }}>
                   <MessageContent content={msg.content} />
                 </div>
               ) : msg.role === 'user' ? (
-                <div className="max-w-[72%] px-4 py-2.5 rounded-[18px] rounded-tr-[4px] text-sm"
-                  style={{ background: 'var(--bg-elevated)', color: 'var(--text-primary)', border: '1px solid var(--border-default)' }}>
+                <div style={{ maxWidth: '68%', padding: '10px 14px', borderRadius: 12, borderBottomRightRadius: 4, background: '#111', color: '#fff', fontSize: 13, lineHeight: 1.6 }}>
                   {msg.content}
                 </div>
               ) : (
-                <div className="max-w-[86%] space-y-2">
+                <div style={{ maxWidth: '84%', display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {msg.toolActivity && (
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-[var(--radius-md)] text-xs"
-                      style={{ background: 'rgba(108,92,231,0.10)', color: 'var(--accent-400)', border: '1px solid rgba(108,92,231,0.15)' }}>
-                      <Sparkles className="w-3.5 h-3.5 shrink-0 spin" />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '7px 12px', borderRadius: 8, background: '#f0f4ff', border: '1px solid #dce8ff', fontSize: 12, color: '#2563eb' }}>
+                      <Sparkles size={13} style={{ animation: 'spin 1.2s linear infinite', flexShrink: 0 }} />
                       {msg.toolActivity}
                     </div>
                   )}
-                  {(msg.content || msg.isStreaming) ? (
-                    <div className="px-4 py-3 rounded-[var(--radius-lg)] text-sm leading-relaxed"
-                      style={{ color: 'var(--text-secondary)' }}>
+                  {(msg.content || msg.isStreaming) && (
+                    <div style={{ padding: '12px 16px', borderRadius: 12, borderBottomLeftRadius: 4, background: '#fff', border: '1px solid #ebebf0', fontSize: 13, color: '#333', lineHeight: 1.8 }}>
                       <div className={msg.isStreaming && msg.content ? 'streaming-cursor' : ''}>
                         <MessageContent content={msg.content} />
                       </div>
                       {msg.isStreaming && !msg.content && (
-                        <div className="flex items-center gap-2 mt-2" style={{ color: 'var(--text-tertiary)' }}>
-                          <Loader2 className="w-3.5 h-3.5 spin" />
-                          <span className="text-xs">思考中...</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#bbb' }}>
+                          <Loader2 size={13} style={{ animation: 'spin 0.8s linear infinite' }} />
+                          <span style={{ fontSize: 12 }}>思考中...</span>
                         </div>
                       )}
                     </div>
-                  ) : null}
+                  )}
                 </div>
               )}
             </div>
@@ -275,25 +282,19 @@ export default function WorkspaceClient({ caseData, initialDocuments }: Props) {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input area — sticky bottom with backdrop blur */}
-        <div className="px-5 pb-5 pt-3 shrink-0"
-          style={{
-            borderTop: '1px solid var(--border-subtle)',
-            background: 'rgba(20,20,26,0.85)',
-            backdropFilter: 'blur(12px)',
-          }}>
+        {/* Input area */}
+        <div style={{ padding: '12px 20px 16px', background: '#fff', borderTop: '1px solid #ebebf0', flexShrink: 0 }}>
           {mode === 'draft' && (
-            <div className="flex items-center gap-2 mb-2.5">
-              <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>文书类型</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+              <span style={{ fontSize: 12, color: '#aaa' }}>文书类型</span>
               <select value={docType} onChange={e => setDocType(e.target.value)}
-                className="input-base text-xs py-1" style={{ width: 'auto' }}>
+                style={{ height: 28, padding: '0 8px', borderRadius: 6, border: '1px solid #e0e0e8', background: '#fafafa', fontSize: 12, color: '#555', outline: 'none' }}>
                 {DOC_TYPE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             </div>
           )}
-          <div className="flex gap-2 items-end">
-            <div className="flex-1 rounded-[var(--radius-xl)] overflow-hidden"
-              style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)' }}>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end' }}>
+            <div style={{ flex: 1, borderRadius: 10, border: '1px solid #e0e0e8', background: '#fafafa', overflow: 'hidden' }}>
               <textarea
                 ref={textareaRef}
                 value={input}
@@ -301,58 +302,45 @@ export default function WorkspaceClient({ caseData, initialDocuments }: Props) {
                 onKeyDown={handleKeyDown}
                 rows={2}
                 disabled={loading}
-                className="w-full px-4 py-3 text-sm resize-none outline-none"
-                style={{ background: 'transparent', color: 'var(--text-primary)' }}
-                placeholder={mode === 'draft'
-                  ? '描述你需要起草的文书，如：帮我起草一份劳动合同纠纷起诉状...'
-                  : '输入检索内容，如：劳动合同解除的法定条件...'}
+                style={{ width: '100%', padding: '10px 14px', border: 'none', background: 'transparent', outline: 'none', fontSize: 13, color: '#111', resize: 'none', lineHeight: 1.6 }}
+                placeholder={mode === 'draft' ? '描述你需要起草的文书，如：帮我起草一份劳动合同纠纷起诉状...' : '输入检索内容，如：劳动合同解除的法定条件...'}
               />
             </div>
             <button onClick={handleSend} disabled={loading || !input.trim()}
-              className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center transition-all shrink-0"
-              style={{
-                background: loading || !input.trim()
-                  ? 'var(--bg-elevated)'
-                  : 'linear-gradient(135deg, var(--accent-600), var(--accent-700))',
-                color: loading || !input.trim() ? 'var(--text-tertiary)' : '#fff',
-                boxShadow: (loading || !input.trim()) ? 'none' : 'var(--shadow-accent)',
-              }}>
-              {loading ? <Loader2 className="w-4 h-4 spin" /> : <Send className="w-4 h-4" />}
+              style={{ width: 38, height: 38, borderRadius: 9, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: loading || !input.trim() ? 'default' : 'pointer', flexShrink: 0, background: loading || !input.trim() ? '#f0f0f5' : '#111', color: loading || !input.trim() ? '#bbb' : '#fff', transition: 'all 0.15s' }}>
+              {loading ? <Loader2 size={15} style={{ animation: 'spin 0.8s linear infinite' }} /> : <Send size={15} />}
             </button>
           </div>
-          <p className="text-xs mt-2" style={{ color: 'var(--text-tertiary)' }}>Enter 发送 · Shift+Enter 换行</p>
+          <p style={{ fontSize: 11, color: '#ccc', marginTop: 6 }}>Enter 发送 · Shift+Enter 换行</p>
         </div>
       </div>
 
       {/* Right: Document preview */}
       {showPreview && (
-        <div className="w-[420px] flex flex-col shrink-0"
-          style={{ background: 'var(--bg-surface)', borderLeft: '1px solid var(--border-subtle)' }}>
-          <div className="flex items-center justify-between px-4 py-3 shrink-0"
-            style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-            <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4" style={{ color: 'var(--accent-400)' }} />
-              <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>文书预览</span>
+        <div style={{ width: 400, display: 'flex', flexDirection: 'column', background: '#fff', borderLeft: '1px solid #ebebf0', flexShrink: 0 }}>
+          <div style={{ height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 18px', borderBottom: '1px solid #ebebf0', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+              <FileText size={14} style={{ color: '#2563eb' }} />
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>文书预览</span>
             </div>
             <button onClick={() => setShowPreview(false)}
-              className="p-1 rounded-[var(--radius-sm)] transition-colors"
-              style={{ color: 'var(--text-tertiary)' }}>
-              <X className="w-4 h-4" />
+              style={{ width: 28, height: 28, borderRadius: 6, border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb' }}
+              onMouseEnter={e => e.currentTarget.style.background = '#f5f5f8'}
+              onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+              <X size={15} />
             </button>
           </div>
-          <div className="flex-1 overflow-auto p-5">
+          <div style={{ flex: 1, overflow: 'auto', padding: '18px 20px' }}>
             {previewContent ? (
-              <pre className="text-sm whitespace-pre-wrap font-sans leading-relaxed"
-                style={{ color: 'var(--text-secondary)' }}>
+              <pre style={{ fontSize: 13, whiteSpace: 'pre-wrap', fontFamily: 'inherit', color: '#333', lineHeight: 1.9 }}>
                 {previewContent}
               </pre>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full gap-3">
-                <div className="w-12 h-12 rounded-[var(--radius-md)] flex items-center justify-center"
-                  style={{ background: 'var(--bg-elevated)' }}>
-                  <Sparkles className="w-5 h-5" style={{ color: 'var(--text-tertiary)' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 10 }}>
+                <div style={{ width: 44, height: 44, borderRadius: 10, background: '#f5f5f8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Sparkles size={18} style={{ color: '#ccc' }} />
                 </div>
-                <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>文书生成后将在此预览</p>
+                <p style={{ fontSize: 13, color: '#bbb' }}>文书生成后将在此预览</p>
               </div>
             )}
           </div>
@@ -369,7 +357,7 @@ function MessageContent({ content }: { content: string }) {
     <>
       {parts.map((part, i) =>
         part.startsWith('**') && part.endsWith('**')
-          ? <strong key={i} style={{ color: 'var(--text-primary)' }}>{part.slice(2, -2)}</strong>
+          ? <strong key={i} style={{ color: '#111' }}>{part.slice(2, -2)}</strong>
           : <span key={i}>{part}</span>
       )}
     </>
