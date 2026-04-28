@@ -8,7 +8,7 @@ import { Eye, EyeOff } from 'lucide-react'
 type Tab = 'wechat' | 'phone' | 'password'
 
 export default function LoginPage() {
-  const [tab, setTab] = useState<Tab>('wechat')
+  const [tab, setTab] = useState<Tab>('phone')
   const [agreed, setAgreed] = useState(false)
 
   // phone tab
@@ -97,8 +97,8 @@ export default function LoginPage() {
   }
 
   const tabs: { key: Tab; label: string }[] = [
-    { key: 'wechat', label: '微信扫码登录' },
     { key: 'phone', label: '手机快捷登录' },
+    { key: 'wechat', label: '微信扫码登录' },
     { key: 'password', label: '账号密码登录' },
   ]
 
