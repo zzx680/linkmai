@@ -137,20 +137,12 @@ export default function LandingPage() {
         borderBottom: '1px solid rgba(255,255,255,0.06)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            width: 28, height: 28, borderRadius: 8, flexShrink: 0,
-            background: 'rgba(255,255,255,0.08)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255,255,255,0.12)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <svg width="18" height="18" viewBox="0 0 40 40" fill="none">
-              <path d="M12 28 L20 12 L28 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-              <path d="M15 23 L25 23" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-              <circle cx="20" cy="12" r="2" fill="white"/>
-            </svg>
-          </div>
+          <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+            <rect width="40" height="40" rx="10" fill="rgba(255,255,255,0.08)" />
+            <path d="M12 28 L20 12 L28 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            <path d="M15 23 L25 23" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            <circle cx="20" cy="12" r="2" fill="white"/>
+          </svg>
           <span style={{ fontSize: 14, fontWeight: 700, letterSpacing: '0.02em', color: '#fff' }}>
             灵迈 <span style={{ color: 'rgba(255,255,255,0.45)', fontWeight: 400 }}>Linkmai</span>
           </span>
