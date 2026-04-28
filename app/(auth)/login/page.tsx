@@ -3,252 +3,391 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
+
+type Tab = 'wechat' | 'phone' | 'password'
 
 export default function LoginPage() {
+  const [tab, setTab] = useState<Tab>('wechat')
+  const [agreed, setAgreed] = useState(false)
+
+  // phone tab
+  const [phone, setPhone] = useState('')
+  const [smsCode, setSmsCode] = useState('')
+  const [smsSent, setSmsSent] = useState(false)
+  const [smsCountdown, setSmsCountdown] = useState(0)
+  const [phoneLoading, setPhoneLoading] = useState(false)
+  const [phoneError, setPhoneError] = useState('')
+
+  // password tab
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPw, setShowPw] = useState(false)
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [pwLoading, setPwLoading] = useState(false)
+  const [pwError, setPwError] = useState('')
+
   const router = useRouter()
   const supabase = createClient()
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+  const startCountdown = () => {
+    setSmsCountdown(60)
+    const t = setInterval(() => {
+      setSmsCountdown(n => {
+        if (n <= 1) { clearInterval(t); return 0 }
+        return n - 1
+      })
+    }, 1000)
+  }
+
+  const handleSendSms = async () => {
+    if (!phone || smsCountdown > 0) return
+    setPhoneError('')
+    setPhoneLoading(true)
+    try {
+      const res = await fetch('/api/auth/sms/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setPhoneError(data.error || '发送失败'); return }
+      setSmsSent(true)
+      startCountdown()
+    } catch {
+      setPhoneError('网络错误，请重试')
+    } finally {
+      setPhoneLoading(false)
+    }
+  }
+
+  const handlePhoneLogin = async () => {
+    if (!agreed) { setPhoneError('请先同意用户协议'); return }
+    if (!phone || !smsCode) { setPhoneError('请填写手机号和验证码'); return }
+    setPhoneLoading(true)
+    setPhoneError('')
+    try {
+      const res = await fetch('/api/auth/sms/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, code: smsCode }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setPhoneError(data.error || '验证失败'); return }
+      router.push('/cases')
+    } catch {
+      setPhoneError('网络错误，请重试')
+    } finally {
+      setPhoneLoading(false)
+    }
+  }
+
+  const handlePasswordLogin = async () => {
+    if (!agreed) { setPwError('请先同意用户协议'); return }
+    if (!email || !password) { setPwError('请填写账号和密码'); return }
+    setPwLoading(true)
+    setPwError('')
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) { setError(error.message); setLoading(false) }
+    if (error) { setPwError(error.message); setPwLoading(false) }
     else router.push('/cases')
   }
 
+  const handleWechatLogin = () => {
+    if (!agreed) return
+    window.location.href = '/api/auth/wechat'
+  }
+
+  const tabs: { key: Tab; label: string }[] = [
+    { key: 'wechat', label: '微信扫码登录' },
+    { key: 'phone', label: '手机快捷登录' },
+    { key: 'password', label: '账号密码登录' },
+  ]
+
   return (
-    <div className="min-h-screen flex">
+    <div style={{
+      minHeight: '100vh',
+      background: '#f5f5f5',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontFamily: "-apple-system,'PingFang SC','Helvetica Neue',system-ui,sans-serif",
+    }}>
 
-      {/* ── Left brand panel — Kimi warm light ── */}
-      <div className="hidden md:flex w-[46%] relative flex-col justify-between overflow-hidden"
-        style={{ background: 'var(--bg-base)' }}>
-
-        {/* Floating blur cards — background decoration */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Top right blob */}
-          <div style={{
-            position: 'absolute', top: '-10%', right: '-8%',
-            width: '55%', height: '55%',
-            background: 'linear-gradient(135deg, rgba(55,122,255,0.12) 0%, rgba(107,158,255,0.06) 100%)',
-            borderRadius: '50%',
-            filter: 'blur(60px)',
-          }} />
-          {/* Bottom left blob */}
-          <div style={{
-            position: 'absolute', bottom: '5%', left: '-10%',
-            width: '45%', height: '45%',
-            background: 'linear-gradient(135deg, rgba(55,122,255,0.08) 0%, rgba(107,158,255,0.03) 100%)',
-            borderRadius: '50%',
-            filter: 'blur(50px)',
-          }} />
-          {/* Floating card 1 */}
-          <div className="absolute" style={{
-            top: '22%', right: '8%',
-            width: 180, height: 90,
-            background: 'rgba(255,255,255,0.7)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            borderRadius: 16,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
-            border: '1px solid rgba(255,255,255,0.6)',
-          }} />
-          {/* Floating card 2 */}
-          <div className="absolute" style={{
-            bottom: '28%', left: '5%',
-            width: 160, height: 80,
-            background: 'rgba(255,255,255,0.6)',
-            backdropFilter: 'blur(14px)',
-            WebkitBackdropFilter: 'blur(14px)',
-            borderRadius: 14,
-            boxShadow: '0 6px 24px rgba(0,0,0,0.06)',
-            border: '1px solid rgba(255,255,255,0.5)',
-          }} />
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 flex flex-col justify-between h-full p-16">
-          {/* Logo */}
-          <div className="flex items-center gap-3 animate-blur-in">
-            <div className="w-10 h-10 rounded-2xl flex items-center justify-center"
-              style={{
-                background: 'linear-gradient(135deg, #377AFF, #6b9eff)',
-                boxShadow: '0 4px 16px rgba(55,122,255,0.3)',
-              }}>
-              <span className="text-white font-bold text-base tracking-wide">L</span>
-            </div>
-            <span className="text-base font-semibold tracking-wide" style={{ color: 'var(--text-primary)' }}>LinkMai</span>
-          </div>
-
-          {/* Slogan — hero */}
-          <div className="space-y-3">
-            <h1 className="text-5xl font-bold leading-tight tracking-tight animate-fade-up"
-              style={{
-                color: 'var(--text-primary)',
-                background: 'linear-gradient(135deg, #377AFF 0%, #6b9eff 50%, #377AFF 100%)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}>
-              法有据 · 智无界
-            </h1>
-            <p className="text-base animate-fade-up stagger-1" style={{ color: 'var(--text-secondary)' }}>
-              AI 驱动的律师工作平台
-            </p>
-
-            {/* Feature list */}
-            <div className="space-y-3 pt-4 animate-fade-up stagger-2">
-              {[
-                '文书智能起草',
-                '案件流程管理',
-                '法条数据库检索',
-              ].map((text, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
-                    style={{ background: 'var(--accent-dim)' }}>
-                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent-500)' }} />
-                  </div>
-                  <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Footer */}
-          <p className="text-xs animate-fade-up stagger-3" style={{ color: 'var(--text-tertiary)' }}>
-            &copy; 2026 LinkMai · 法律 AI 工作平台
-          </p>
-        </div>
+      {/* Logo */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 32 }}>
+        <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="10" fill="#000" />
+          <path d="M12 28 L20 12 L28 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+          <path d="M15 23 L25 23" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+          <circle cx="20" cy="12" r="2" fill="white"/>
+        </svg>
+        <span style={{ fontSize: 18, fontWeight: 700, color: '#000', letterSpacing: '-0.01em' }}>Linkmai</span>
       </div>
 
-      {/* ── Right form panel — Kimi clean white ── */}
-      <div className="flex-1 flex items-center justify-center"
-        style={{ background: 'var(--bg-surface)' }}>
-        <div className="w-full max-w-[400px] px-10">
+      {/* Card */}
+      <div style={{
+        width: 420,
+        background: '#fff',
+        borderRadius: 12,
+        boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
+        padding: '32px 36px 28px',
+      }}>
 
-          {/* Logo */}
-          <div className="flex items-center gap-2.5 mb-10">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{
-                background: 'linear-gradient(135deg, #377AFF, #6b9eff)',
-                boxShadow: '0 3px 12px rgba(55,122,255,0.25)',
+        {/* Tabs */}
+        <div style={{ display: 'flex', borderBottom: '1px solid #f0f0f0', marginBottom: 28 }}>
+          {tabs.map(t => (
+            <button key={t.key} onClick={() => setTab(t.key)} style={{
+              flex: 1,
+              paddingBottom: 12,
+              fontSize: 13,
+              fontWeight: tab === t.key ? 600 : 400,
+              color: tab === t.key ? '#000' : '#999',
+              background: 'none',
+              border: 'none',
+              borderBottom: tab === t.key ? '2px solid #000' : '2px solid transparent',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+              marginBottom: -1,
+            }}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* WeChat tab */}
+        {tab === 'wechat' && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+            {/* QR placeholder */}
+            <div style={{
+              width: 180, height: 180,
+              background: '#f5f5f5',
+              borderRadius: 8,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              border: '1px solid #ebebeb',
+            }}>
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <rect x="4" y="4" width="16" height="16" rx="2" stroke="#ccc" strokeWidth="2"/>
+                <rect x="8" y="8" width="8" height="8" fill="#ccc"/>
+                <rect x="28" y="4" width="16" height="16" rx="2" stroke="#ccc" strokeWidth="2"/>
+                <rect x="32" y="8" width="8" height="8" fill="#ccc"/>
+                <rect x="4" y="28" width="16" height="16" rx="2" stroke="#ccc" strokeWidth="2"/>
+                <rect x="8" y="32" width="8" height="8" fill="#ccc"/>
+                <rect x="28" y="28" width="4" height="4" fill="#ccc"/>
+                <rect x="36" y="28" width="4" height="4" fill="#ccc"/>
+                <rect x="28" y="36" width="4" height="4" fill="#ccc"/>
+                <rect x="36" y="36" width="4" height="4" fill="#ccc"/>
+                <rect x="32" y="32" width="4" height="4" fill="#ccc"/>
+              </svg>
+              <span style={{ fontSize: 11, color: '#bbb' }}>二维码加载中</span>
+            </div>
+
+            {/* Mock user */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: '50%',
+                background: 'linear-gradient(135deg, #e0e0e0, #c8c8c8)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-              <span className="text-white font-bold text-sm">L</span>
-            </div>
-            <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>LinkMai</span>
-          </div>
-
-          {/* Heading */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>欢迎回来</h2>
-            <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>登录到你的律师工作台</p>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>邮箱地址</label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                  style={{ color: 'var(--text-tertiary)' }} />
-                <input
-                  type="email" value={email} onChange={e => setEmail(e.target.value)} required
-                  className="input-base" style={{ paddingLeft: 40, height: 48 }}
-                  placeholder="your@email.com"
-                />
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="8" r="4" stroke="#999" strokeWidth="1.5"/>
+                  <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#999" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
               </div>
+              <span style={{ fontSize: 13, color: '#666' }}>扫码后自动登录</span>
             </div>
 
-            <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>密码</label>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                  style={{ color: 'var(--text-tertiary)' }} />
-                <input
-                  type={showPw ? 'text' : 'password'}
-                  value={password} onChange={e => setPassword(e.target.value)} required
-                  className="input-base" style={{ paddingLeft: 40, paddingRight: 44, height: 48 }}
-                  placeholder="输入密码"
-                />
-                <button type="button" onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md"
-                  style={{ color: 'var(--text-tertiary)' }}>
-                  {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+            <button
+              onClick={handleWechatLogin}
+              disabled={!agreed}
+              style={{
+                width: '100%', height: 44, borderRadius: 8, border: 'none',
+                background: agreed ? '#000' : '#d0d0d0',
+                color: '#fff', fontSize: 14, fontWeight: 500,
+                cursor: agreed ? 'pointer' : 'not-allowed',
+                transition: 'background 0.15s',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              }}
+              onMouseEnter={e => { if (agreed) e.currentTarget.style.background = '#222' }}
+              onMouseLeave={e => { if (agreed) e.currentTarget.style.background = '#000' }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M9.5 14.5c-3.6 0-6.5-2.4-6.5-5.5S5.9 3.5 9.5 3.5c3.6 0 6.5 2.4 6.5 5.5 0 1-.3 1.9-.8 2.7l.8 2.3-2.5-.8c-.9.5-2 .8-4 .8z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                <path d="M14.5 20.5c-1.2 0-2.3-.3-3.2-.8l-2 .6.6-1.8c-.5-.7-.9-1.5-.9-2.5 0-2.5 2.5-4.5 5.5-4.5s5.5 2 5.5 4.5-2.5 4.5-5.5 4.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+              </svg>
+              微信快捷登录
+            </button>
+          </div>
+        )}
+
+        {/* Phone tab */}
+        {tab === 'phone' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {/* Phone input */}
+            <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{
+                width: 72, height: 44, borderRadius: 8,
+                background: '#f0f0f0', display: 'flex',
+                alignItems: 'center', justifyContent: 'center',
+                fontSize: 13, color: '#333', fontWeight: 500, flexShrink: 0,
+              }}>
+                +86
               </div>
+              <input
+                type="tel" value={phone} onChange={e => setPhone(e.target.value)}
+                placeholder="请输入手机号"
+                style={{
+                  flex: 1, height: 44, borderRadius: 8, border: 'none',
+                  background: '#f0f0f0', padding: '0 14px',
+                  fontSize: 14, color: '#000', outline: 'none',
+                }}
+              />
             </div>
 
-            {/* Remember + forgot */}
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <div className="w-4 h-4 rounded flex items-center justify-center"
-                  style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)' }}>
-                  <input type="checkbox" className="sr-only" />
-                </div>
-                <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>记住登录状态</span>
-              </label>
-              <button type="button" className="text-xs"
-                style={{ color: 'var(--accent-500)' }}>
+            {/* SMS code */}
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input
+                type="text" value={smsCode} onChange={e => setSmsCode(e.target.value)}
+                placeholder="请输入验证码"
+                maxLength={6}
+                style={{
+                  flex: 1, height: 44, borderRadius: 8, border: 'none',
+                  background: '#f0f0f0', padding: '0 14px',
+                  fontSize: 14, color: '#000', outline: 'none',
+                }}
+              />
+              <button
+                onClick={handleSendSms}
+                disabled={!phone || smsCountdown > 0 || phoneLoading}
+                style={{
+                  width: 108, height: 44, borderRadius: 8, border: 'none',
+                  background: (!phone || smsCountdown > 0) ? '#f0f0f0' : '#000',
+                  color: (!phone || smsCountdown > 0) ? '#999' : '#fff',
+                  fontSize: 13, fontWeight: 500, cursor: (!phone || smsCountdown > 0) ? 'default' : 'pointer',
+                  flexShrink: 0, transition: 'all 0.15s',
+                }}
+                onMouseEnter={e => { if (phone && !smsCountdown) e.currentTarget.style.background = '#222' }}
+                onMouseLeave={e => { if (phone && !smsCountdown) e.currentTarget.style.background = '#000' }}
+              >
+                {smsCountdown > 0 ? `${smsCountdown}s 后重发` : '发送验证码'}
+              </button>
+            </div>
+
+            {phoneError && (
+              <p style={{ fontSize: 12, color: '#e53e3e', margin: 0 }}>{phoneError}</p>
+            )}
+
+            <button
+              onClick={handlePhoneLogin}
+              disabled={phoneLoading}
+              style={{
+                width: '100%', height: 44, borderRadius: 8, border: 'none',
+                background: '#000', color: '#fff', fontSize: 14, fontWeight: 500,
+                cursor: 'pointer', marginTop: 4, transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#222'}
+              onMouseLeave={e => e.currentTarget.style.background = '#000'}
+            >
+              {phoneLoading ? '登录中...' : '登录'}
+            </button>
+          </div>
+        )}
+
+        {/* Password tab */}
+        {tab === 'password' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <input
+              type="text" value={email} onChange={e => setEmail(e.target.value)}
+              placeholder="邮箱 / 手机号"
+              style={{
+                height: 44, borderRadius: 8, border: 'none',
+                background: '#f0f0f0', padding: '0 14px',
+                fontSize: 14, color: '#000', outline: 'none', width: '100%',
+              }}
+            />
+
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPw ? 'text' : 'password'}
+                value={password} onChange={e => setPassword(e.target.value)}
+                placeholder="密码"
+                style={{
+                  height: 44, borderRadius: 8, border: 'none',
+                  background: '#f0f0f0', padding: '0 44px 0 14px',
+                  fontSize: 14, color: '#000', outline: 'none', width: '100%',
+                  boxSizing: 'border-box',
+                }}
+              />
+              <button
+                type="button" onClick={() => setShowPw(!showPw)}
+                style={{
+                  position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                  color: '#999', display: 'flex', alignItems: 'center',
+                }}>
+                {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button style={{ background: 'none', border: 'none', fontSize: 12, color: '#999', cursor: 'pointer', padding: 0 }}>
                 忘记密码？
               </button>
             </div>
 
-            {/* Error */}
-            {error && (
-              <div className="px-4 py-3 rounded-xl text-sm"
-                style={{ background: 'var(--danger-bg)', color: 'var(--danger)', border: '1px solid rgba(220,38,38,0.12)' }}>
-                {error}
-              </div>
+            {pwError && (
+              <p style={{ fontSize: 12, color: '#e53e3e', margin: 0 }}>{pwError}</p>
             )}
 
-            {/* Submit */}
-            <button type="submit" disabled={loading} className="btn-primary w-full" style={{ height: 48, marginTop: 4 }}>
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full border-2 border-t-transparent spin"
-                    style={{ borderColor: '#fff', borderTopColor: 'transparent' }} />
-                  登录中...
-                </span>
-              ) : (
-                <span className="flex items-center gap-2">
-                  登录工作台
-                  <ArrowRight className="w-4 h-4" />
-                </span>
-              )}
+            <button
+              onClick={handlePasswordLogin}
+              disabled={pwLoading}
+              style={{
+                width: '100%', height: 44, borderRadius: 8, border: 'none',
+                background: '#000', color: '#fff', fontSize: 14, fontWeight: 500,
+                cursor: 'pointer', transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#222'}
+              onMouseLeave={e => e.currentTarget.style.background = '#000'}
+            >
+              {pwLoading ? '登录中...' : '登录'}
             </button>
-          </form>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3 my-7">
-            <div className="flex-1 h-px" style={{ background: 'var(--border-default)' }} />
-            <span className="text-xs px-1" style={{ color: 'var(--text-tertiary)' }}>其他登录方式</span>
-            <div className="flex-1 h-px" style={{ background: 'var(--border-default)' }} />
           </div>
+        )}
 
-          {/* SSO */}
-          <div className="flex gap-3">
-            <button className="btn-outline flex-1" style={{ height: 44 }}>企业微信</button>
-            <button className="btn-outline flex-1" style={{ height: 44 }}>钉钉</button>
+        {/* Agreement */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginTop: 24 }}>
+          <div
+            onClick={() => setAgreed(!agreed)}
+            style={{
+              width: 16, height: 16, borderRadius: 4, flexShrink: 0, marginTop: 1,
+              border: agreed ? 'none' : '1.5px solid #ccc',
+              background: agreed ? '#000' : 'transparent',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'all 0.15s',
+            }}>
+            {agreed && (
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            )}
           </div>
-
-          {/* Register */}
-          <p className="mt-8 text-center text-sm" style={{ color: 'var(--text-tertiary)' }}>
-            还没有账户？
-            <Link href="/register"
-              className="font-medium ml-1"
-              style={{ color: 'var(--accent-500)' }}>
-              联系管理员开通
-            </Link>
+          <p style={{ fontSize: 11, color: '#999', lineHeight: 1.6, margin: 0 }}>
+            我已阅读并同意
+            <a href="#" style={{ color: '#555', textDecoration: 'none' }}>《用户服务协议》</a>
+            <a href="#" style={{ color: '#555', textDecoration: 'none' }}>《用户隐私协议》</a>
+            <a href="#" style={{ color: '#555', textDecoration: 'none' }}>《平台服务协议》</a>
           </p>
         </div>
       </div>
+
+      {/* Footer */}
+      <p style={{ marginTop: 32, fontSize: 11, color: '#bbb', textAlign: 'center' }}>
+        © 2026 Linkmai · 灵迈科技 · 沪ICP备XXXXXXXX号
+      </p>
 
     </div>
   )
