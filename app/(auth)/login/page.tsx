@@ -39,10 +39,11 @@ function LoginPageInner() {
     if (!account || !password) { setPwError('请填写账号和密码'); return }
     setPwLoading(true); setPwError('')
     const isPhone = /^1[3-9]\d{9}$/.test(account)
-    const { error } = isPhone
+    const { data, error } = isPhone
       ? await supabase.auth.signInWithPassword({ phone: account, password })
       : await supabase.auth.signInWithPassword({ email: account, password })
     if (error) { setPwError(error.message); setPwLoading(false) }
+    else if (data.user?.user_metadata?.is_admin) router.push('/admin')
     else router.push('/dashboard')
   }
 

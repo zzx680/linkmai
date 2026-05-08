@@ -41,7 +41,7 @@ export async function updateSession(request: NextRequest) {
 
   if (user && isAuthRoute) {
     const url = request.nextUrl.clone()
-    url.pathname = '/cases'
+    url.pathname = user.user_metadata?.is_admin ? '/admin' : '/cases'
     return NextResponse.redirect(url)
   }
 
