@@ -18,6 +18,9 @@ export interface Case {
   court: string | null
   case_number: string | null
   description: string | null
+  client_phone?: string | null
+  fee_amount?: number | null
+  fee_status?: 'unpaid' | 'partial' | 'paid' | null
   metadata: Json
   created_at: string
   updated_at: string
@@ -31,6 +34,8 @@ export interface Document {
   doc_type: DocType
   current_version: number
   status: DocStatus
+  share_token?: string | null
+  share_enabled?: boolean
   created_at: string
   updated_at: string
 }
@@ -81,16 +86,28 @@ export interface SearchHistory {
 }
 
 export interface SearchResult {
+  id: number
   title: string
   url: string
   snippet: string
   source: string
 }
 
+export interface DraftPlan {
+  docType: string
+  keyFacts: string[]
+  legalIssues: string[]
+  searchQueries: string[]
+  outline: string[]
+  legalRefs: string // pre-fetched search results, injected into draft prompt
+}
+
 export type StreamChunk =
   | { type: 'text'; content: string }
   | { type: 'tool_call'; name: string; args: Json }
   | { type: 'tool_result'; name: string; result: string }
+  | { type: 'plan'; plan: DraftPlan }
+  | { type: 'billing'; cost: number; balance: number }
   | { type: 'done'; document_id?: string }
   | { type: 'error'; message: string }
 
@@ -108,4 +125,108 @@ export interface CreateDocumentInput {
   case_id: string
   title: string
   doc_type: DocType
+}
+
+// ===== 功能 2: 模板系统 =====
+
+export interface DraftTemplate {
+  id: string
+  user_id: string | null
+  title: string
+  doc_type: string
+  prompt_md: string
+  is_system: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface CreateTemplateInput {
+  title: string
+  doc_type: string
+  prompt_md: string
+}
+
+// ===== 功能 1: 材料提取 =====
+
+export type ColumnFormat = 'text' | 'date' | 'yes_no' | 'bulleted_list'
+
+export interface ExtractionColumn {
+  key: string
+  label: string
+  format: ColumnFormat
+  description?: string
+}
+
+export type CellFlag = 'green' | 'grey' | 'yellow' | 'red'
+
+export interface CellCitation {
+  quote: string
+  position: string
+}
+
+export interface CellContent {
+  summary: string
+  flag: CellFlag
+  citations: CellCitation[]
+}
+
+export type CellStatus = 'pending' | 'extracting' | 'done' | 'error'
+
+export interface Material {
+  id: string
+  case_id: string
+  user_id: string
+  filename: string
+  content: string
+  file_type: 'text' | 'pdf' | 'image'
+  created_at: string
+}
+
+export interface MaterialReview {
+  id: string
+  case_id: string
+  user_id: string
+  title: string
+  columns_config: ExtractionColumn[]
+  created_at: string
+}
+
+export interface MaterialCell {
+  id: string
+  review_id: string
+  material_id: string
+  column_index: number
+  content: CellContent
+  status: CellStatus
+}
+
+// ===== 功能 3: 文书编辑 =====
+
+export interface EditSuggestion {
+  find: string
+  replace: string
+  reason: string
+}
+
+export interface EditSuggestionsResponse {
+  edits: EditSuggestion[]
+}
+
+// ===== 功能: 案件期限 =====
+
+export interface CaseDeadline {
+  id: string
+  case_id: string
+  user_id: string
+  title: string
+  due_date: string  // date string YYYY-MM-DD
+  status: 'pending' | 'done'
+  created_at: string
+}
+
+export interface CreateDeadlineInput {
+  case_id: string
+  title: string
+  due_date: string
+  status?: 'pending' | 'done'
 }

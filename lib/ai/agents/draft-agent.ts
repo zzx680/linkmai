@@ -1,7 +1,7 @@
 import { getKimi, AI_MODEL } from '@/lib/ai/kimi'
 import { tools, DOC_TEMPLATES } from '@/lib/ai/tools'
 import { DRAFT_SYSTEM_PROMPT } from '@/lib/ai/prompts'
-import type { StreamChunk, Json } from '@/lib/types'
+import type { StreamChunk, DraftPlan, Json } from '@/lib/types'
 import OpenAI from 'openai'
 
 interface DraftAgentInput {
@@ -13,6 +13,7 @@ interface DraftAgentInput {
   caseTitle?: string
   caseDescription?: string
   caseContext?: string
+  plan?: DraftPlan
 }
 
 interface AccumulatedToolCall {
@@ -21,12 +22,38 @@ interface AccumulatedToolCall {
   arguments: string
 }
 
+function buildPlanContext(plan: DraftPlan): string {
+  const parts: string[] = []
+  if (plan.keyFacts.length) {
+    parts.push('【关键事实】\n' + plan.keyFacts.map((f, i) => `${i + 1}. ${f}`).join('\n'))
+  }
+  if (plan.legalIssues.length) {
+    parts.push('【核心法律问题】\n' + plan.legalIssues.map((l, i) => `${i + 1}. ${l}`).join('\n'))
+  }
+  if (plan.outline.length) {
+    parts.push('【文书大纲】\n' + plan.outline.map((o, i) => `${i + 1}. ${o}`).join('\n'))
+  }
+  if (plan.legalRefs) {
+    parts.push('【法律检索结果（已为你预先检索，可直接引用）】\n' + plan.legalRefs)
+  }
+  return parts.join('\n\n')
+}
+
 export async function* runDraftAgent(input: DraftAgentInput): AsyncGenerator<StreamChunk> {
   const caseInfo = input.caseContext || `案件：${input.caseTitle || ''}\n案情：${input.caseDescription || '暂无'}`
 
+  const planHint = input.plan
+    ? `\n\n以下是为你准备的起草方案，请严格按照方案起草：\n\n${buildPlanContext(input.plan)}`
+    : ''
+
+  const hasLegalRefs = input.plan?.legalRefs
+  const systemPrompt = hasLegalRefs
+    ? DRAFT_SYSTEM_PROMPT + '\n\n注意：法律检索结果已经为你预先准备好（见下方），你无需再调用 search_legal_database，直接引用即可。如果检索结果不足以覆盖所有法律问题，可以在文书中标注【需补充法条依据】。'
+    : DRAFT_SYSTEM_PROMPT
+
   const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
-    { role: 'system', content: DRAFT_SYSTEM_PROMPT },
-    { role: 'user', content: `案件信息：\n${caseInfo}\n\n请帮我起草：${input.instruction}` },
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: `案件信息：\n${caseInfo}${planHint}\n\n请帮我起草：${input.instruction}` },
   ]
 
   const maxIterations = 5

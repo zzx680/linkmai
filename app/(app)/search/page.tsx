@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
-import { Search, FileText, LogOut, Loader2, ExternalLink, Sparkles, Folder, Scale } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
+import { Search, FileText, Loader2, ExternalLink, Sparkles, Scale } from 'lucide-react'
 import type { SearchResult } from '@/lib/types'
+import Sidebar from '@/app/components/Sidebar'
 
 const EXAMPLES = [
   '劳动合同解除经济补偿金计算',
@@ -14,13 +14,30 @@ const EXAMPLES = [
   '交通事故赔偿标准',
 ]
 
+function renderSummaryWithCitations(text: string): React.ReactNode {
+  const parts = text.split(/(\[\d+\])/g)
+  return parts.map((part, i) => {
+    const match = part.match(/^\[(\d+)\]$/)
+    if (match) {
+      return (
+        <sup key={i}>
+          <a href={`#result-${match[1]}`}
+            style={{ color: '#2563eb', textDecoration: 'none', fontSize: '0.75em', fontWeight: 600, padding: '0 1px' }}>
+            [{match[1]}]
+          </a>
+        </sup>
+      )
+    }
+    return <span key={i}>{part}</span>
+  })
+}
+
 export default function SearchPage() {
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [summary, setSummary] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
   const [searched, setSearched] = useState(false)
-  const supabase = createClient()
 
   const handleSearch = async (q?: string) => {
     const searchQuery = q || query
@@ -45,44 +62,10 @@ export default function SearchPage() {
     setLoading(false)
   }
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    window.location.href = '/login'
-  }
-
   return (
     <div style={{ display: 'flex', height: '100vh', background: '#f5f6fa', fontFamily: "-apple-system,'PingFang SC','Helvetica Neue',system-ui,sans-serif" }}>
 
-      {/* Sidebar */}
-      <aside style={{ width: 220, display: 'flex', flexDirection: 'column', background: '#fff', borderRight: '1px solid #ebebf0', flexShrink: 0 }}>
-        <div style={{ padding: '20px 20px 16px', display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid #f0f0f5' }}>
-          <div style={{ width: 30, height: 30, borderRadius: 8, background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <svg width="16" height="16" viewBox="0 0 40 40" fill="none">
-              <path d="M12 28 L20 12 L28 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-              <path d="M15 23 L25 23" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          </div>
-          <span style={{ fontSize: 15, fontWeight: 700, color: '#111', letterSpacing: '-0.01em' }}>Linkmai</span>
-        </div>
-
-        <nav style={{ flex: 1, padding: '12px 10px' }}>
-          <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.06em', padding: '4px 10px 8px', textTransform: 'uppercase' as const }}>工作台</p>
-          <Link href="/cases" style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 8, marginBottom: 2, fontSize: 13, color: '#888', textDecoration: 'none' }}>
-            <Folder size={15} />案件管理
-          </Link>
-          <Link href="/search" style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 8, marginBottom: 2, fontSize: 13, fontWeight: 600, color: '#111', background: '#f0f0f5', textDecoration: 'none' }}>
-            <Search size={15} />法律检索
-          </Link>
-        </nav>
-
-        <div style={{ padding: '12px 10px', borderTop: '1px solid #f0f0f5' }}>
-          <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 10px', borderRadius: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#999', fontSize: 13 }}
-            onMouseEnter={e => e.currentTarget.style.background = '#f5f5f8'}
-            onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-            <LogOut size={14} />退出登录
-          </button>
-        </div>
-      </aside>
+      <Sidebar />
 
       {/* Main */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -158,7 +141,9 @@ export default function SearchPage() {
                   </div>
                   <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>AI 检索摘要</span>
                 </div>
-                <p style={{ fontSize: 13, color: '#555', lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>{summary}</p>
+                <p style={{ fontSize: 13, color: '#555', lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
+                  {renderSummaryWithCitations(summary)}
+                </p>
               </div>
             )}
 
@@ -170,11 +155,14 @@ export default function SearchPage() {
                   <span style={{ fontSize: 12, color: '#aaa', marginLeft: 8 }}>{results.length} 条</span>
                 </div>
                 {results.map((r, i) => (
-                  <a key={i} href={r.url} target="_blank" rel="noopener noreferrer"
+                  <a key={i} id={`result-${r.id ?? i + 1}`} href={r.url} target="_blank" rel="noopener noreferrer"
                     style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, padding: '14px 20px', borderBottom: i < results.length - 1 ? '1px solid #f5f5f8' : 'none', textDecoration: 'none', transition: 'background 0.1s' }}
                     onMouseEnter={e => e.currentTarget.style.background = '#fafafa'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                     <div style={{ display: 'flex', gap: 12, minWidth: 0 }}>
+                      <div style={{ width: 22, height: 22, borderRadius: 5, background: '#f0f4ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 11, fontWeight: 700, color: '#2563eb', marginTop: 4 }}>
+                        {r.id ?? i + 1}
+                      </div>
                       <div style={{ width: 30, height: 30, borderRadius: 7, background: '#f0f4ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>
                         <FileText size={13} style={{ color: '#2563eb' }} />
                       </div>

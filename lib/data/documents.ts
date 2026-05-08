@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/public'
 import type { Document, DocumentVersion, CreateDocumentInput } from '@/lib/types'
 
 export async function getDocumentsByCase(caseId: string): Promise<Document[]> {
@@ -89,4 +90,53 @@ export async function saveDocumentVersion(
   await supabase.from('documents').update({ current_version: nextVersion }).eq('id', documentId)
 
   return version
+}
+
+export async function enableShare(docId: string): Promise<string> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+  const token = crypto.randomUUID()
+  const { error } = await supabase
+    .from('documents')
+    .update({ share_token: token, share_enabled: true })
+    .eq('id', docId)
+    .eq('user_id', user.id)
+  if (error) throw error
+  return token
+}
+
+export async function disableShare(docId: string): Promise<void> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+  const { error } = await supabase
+    .from('documents')
+    .update({ share_enabled: false })
+    .eq('id', docId)
+    .eq('user_id', user.id)
+  if (error) throw error
+}
+
+export async function getDocumentByShareToken(
+  token: string
+): Promise<{ document: Document; content: string } | null> {
+  const supabase = createPublicClient()
+  const { data: doc, error } = await supabase
+    .from('documents')
+    .select('*')
+    .eq('share_token', token)
+    .eq('share_enabled', true)
+    .single()
+  if (error || !doc) return null
+
+  const { data: version } = await supabase
+    .from('document_versions')
+    .select('content')
+    .eq('document_id', doc.id)
+    .order('version', { ascending: false })
+    .limit(1)
+    .single()
+
+  return { document: doc as Document, content: version?.content || '' }
 }

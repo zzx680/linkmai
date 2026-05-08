@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
-import { FileText, Search, Plus, LogOut, ChevronRight, Clock, Folder, X, Scale } from 'lucide-react'
+import { FileText, Search, Plus, ChevronRight, Clock, X, Scale } from 'lucide-react'
 import type { Case } from '@/lib/types'
+import Sidebar from '@/app/components/Sidebar'
 
 const CASE_TYPE_LABELS: Record<string, string> = {
   civil: '民事', criminal: '刑事', administrative: '行政', arbitration: '仲裁',
@@ -21,7 +21,6 @@ export default function CasesPage() {
   const [loading, setLoading] = useState(true)
   const [showNew, setShowNew] = useState(false)
   const [creating, setCreating] = useState(false)
-  const supabase = createClient()
 
   useEffect(() => { fetchCases() }, [])
 
@@ -52,44 +51,10 @@ export default function CasesPage() {
     setCreating(false)
   }
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    window.location.href = '/login'
-  }
-
   return (
     <div style={{ display: 'flex', height: '100vh', background: '#f5f6fa', fontFamily: "-apple-system,'PingFang SC','Helvetica Neue',system-ui,sans-serif" }}>
 
-      {/* Sidebar */}
-      <aside style={{ width: 220, display: 'flex', flexDirection: 'column', background: '#fff', borderRight: '1px solid #ebebf0', flexShrink: 0 }}>
-        {/* Logo */}
-        <div style={{ padding: '20px 20px 16px', display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid #f0f0f5' }}>
-          <div style={{ width: 30, height: 30, borderRadius: 8, background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <svg width="16" height="16" viewBox="0 0 40 40" fill="none">
-              <path d="M12 28 L20 12 L28 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-              <path d="M15 23 L25 23" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          </div>
-          <span style={{ fontSize: 15, fontWeight: 700, color: '#111', letterSpacing: '-0.01em' }}>Linkmai</span>
-        </div>
-
-        {/* Nav */}
-        <nav style={{ flex: 1, padding: '12px 10px' }}>
-          <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.06em', padding: '4px 10px 8px', textTransform: 'uppercase' }}>工作台</p>
-          <SidebarItem icon={<Folder size={15} />} label="案件管理" active href="/cases" />
-          <SidebarItem icon={<Search size={15} />} label="法律检索" href="/search" />
-        </nav>
-
-        {/* User */}
-        <div style={{ padding: '12px 10px', borderTop: '1px solid #f0f0f5' }}>
-          <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 10px', borderRadius: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#999', fontSize: 13 }}
-            onMouseEnter={e => e.currentTarget.style.background = '#f5f5f8'}
-            onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-            <LogOut size={14} />
-            退出登录
-          </button>
-        </div>
-      </aside>
+      <Sidebar />
 
       {/* Main */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -255,24 +220,6 @@ export default function CasesPage() {
         </main>
       </div>
     </div>
-  )
-}
-
-function SidebarItem({ icon, label, active, href }: { icon: React.ReactNode; label: string; active?: boolean; href: string }) {
-  return (
-    <Link href={href} style={{
-      display: 'flex', alignItems: 'center', gap: 9,
-      padding: '8px 10px', borderRadius: 8, marginBottom: 2,
-      fontSize: 13, fontWeight: active ? 600 : 400,
-      color: active ? '#111' : '#888',
-      background: active ? '#f0f0f5' : 'transparent',
-      textDecoration: 'none', transition: 'background 0.1s, color 0.1s',
-    }}
-      onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#f5f5f8' }}
-      onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent' }}>
-      {icon}
-      {label}
-    </Link>
   )
 }
 

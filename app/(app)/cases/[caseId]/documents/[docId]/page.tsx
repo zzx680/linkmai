@@ -3,7 +3,9 @@ import { getDocumentById, getDocumentVersions, getLatestVersion } from '@/lib/da
 import { getCaseById } from '@/lib/data/cases'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Clock, Sparkles, User } from 'lucide-react'
+import { ArrowLeft, Clock, Download, Sparkles, User } from 'lucide-react'
+import EditPanel from './EditPanel'
+import ShareButton from './ShareButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,62 +36,53 @@ export default async function DocumentPage({ params }: { params: Promise<{ caseI
   if (!doc || !caseData) notFound()
 
   return (
-    <div className="flex h-screen" style={{ background: 'var(--bg-base)' }}>
+    <div style={{ display: 'flex', height: '100vh', background: 'var(--bg-base)', fontFamily: "-apple-system,'PingFang SC','Helvetica Neue',system-ui,sans-serif" }}>
       {/* Sidebar */}
-      <aside className="w-[240px] flex flex-col shrink-0"
-        style={{ background: 'var(--bg-surface)', borderRight: '1px solid var(--border-subtle)' }}>
-        <div className="px-5 py-5 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg" style={{ background: 'linear-gradient(135deg, var(--accent-600), var(--accent-700))' }} />
-          <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>LinkMai</span>
+      <aside style={{ width: 240, display: 'flex', flexDirection: 'column', flexShrink: 0, background: 'var(--bg-surface)', borderRight: '1px solid var(--border-subtle)' }}>
+        <div style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <img src="/logo.png" alt="Linkmai" style={{ width: 30, height: 30, filter: 'brightness(0) drop-shadow(0 0 0.5px #000) drop-shadow(0 0 0.5px #000)' }} />
+          <span style={{ fontSize: 15, fontWeight: 700, color: '#111', letterSpacing: '-0.01em' }}>Linkmai</span>
         </div>
 
-        <div className="px-4 pb-3">
+        <div style={{ padding: '0 16px 12px' }}>
           <Link href={`/cases/${caseId}`}
-            className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-[var(--radius-md)] transition-colors"
-            style={{ color: 'var(--text-secondary)' }}>
-            <ArrowLeft className="w-3.5 h-3.5" />
+            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, padding: '6px 10px', borderRadius: 8, color: 'var(--text-secondary)', textDecoration: 'none' }}>
+            <ArrowLeft style={{ width: 14, height: 14 }} />
             返回案件
           </Link>
         </div>
 
-        <div className="px-4 pb-4" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{caseData.title}</p>
-          <p className="text-xs font-medium mt-1 leading-snug" style={{ color: 'var(--text-primary)' }}>{doc.title}</p>
+        <div style={{ padding: '0 16px 16px', borderBottom: '1px solid var(--border-subtle)' }}>
+          <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 4 }}>{caseData.title}</p>
+          <p style={{ fontSize: 12, fontWeight: 600, lineHeight: 1.4, color: 'var(--text-primary)' }}>{doc.title}</p>
         </div>
 
         {/* Version history */}
-        <div className="flex-1 overflow-auto p-3">
-          <p className="text-xs font-medium mb-2 flex items-center gap-1.5 px-1" style={{ color: 'var(--text-secondary)' }}>
-            <Clock className="w-3.5 h-3.5" />
+        <div style={{ flex: 1, overflow: 'auto', padding: 12 }}>
+          <p style={{ fontSize: 11, fontWeight: 600, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6, padding: '0 4px', color: 'var(--text-secondary)' }}>
+            <Clock style={{ width: 14, height: 14 }} />
             版本历史
           </p>
-          <div className="space-y-1">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {versions.map((v) => {
               const isActive = v.version === doc.current_version
               return (
                 <div key={v.id}
-                  className="px-3 py-2 rounded-[var(--radius-md)] text-xs transition-all"
-                  style={{
-                    background: isActive ? 'rgba(108,92,231,0.08)' : 'transparent',
-                    border: isActive ? '1px solid rgba(108,92,231,0.15)' : '1px solid transparent',
-                  }}>
-                  <div className="flex items-center justify-between">
-                    <span style={{ color: isActive ? 'var(--accent-400)' : 'var(--text-secondary)' }}>
-                      v{v.version}
-                    </span>
-                    <span className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded"
-                      style={{
-                        color: v.source === 'ai' ? 'var(--accent-400)' : 'var(--text-tertiary)',
-                        background: v.source === 'ai' ? 'rgba(108,92,231,0.10)' : 'var(--bg-elevated)',
-                      }}>
-                      {v.source === 'ai'
-                        ? <><Sparkles className="w-2.5 h-2.5" />AI</>
-                        : <><User className="w-2.5 h-2.5" />手动</>}
+                  style={{ padding: '8px 12px', borderRadius: 8, fontSize: 12, background: isActive ? 'rgba(37,99,235,0.06)' : 'transparent', border: isActive ? '1px solid rgba(37,99,235,0.15)' : '1px solid transparent' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ color: isActive ? '#2563eb' : 'var(--text-secondary)' }}>v{v.version}</span>
+                    <span style={{ fontSize: 10, padding: '1px 6px', borderRadius: 4, color: v.source === 'ai' ? '#2563eb' : 'var(--text-tertiary)', background: v.source === 'ai' ? 'rgba(37,99,235,0.08)' : 'var(--bg-elevated)', display: 'flex', alignItems: 'center', gap: 3 }}>
+                      {v.source === 'ai' ? <><Sparkles style={{ width: 10, height: 10 }} />AI</> : <><User style={{ width: 10, height: 10 }} />手动</>}
                     </span>
                   </div>
-                  <p className="mt-0.5" style={{ color: 'var(--text-tertiary)' }}>
+                  <p style={{ marginTop: 2, fontSize: 11, color: 'var(--text-tertiary)' }}>
                     {new Date(v.created_at).toLocaleDateString('zh-CN')}
                   </p>
+                  {v.change_note && (
+                    <p style={{ marginTop: 2, fontSize: 11, color: 'var(--text-tertiary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {v.change_note}
+                    </p>
+                  )}
                 </div>
               )
             })}
@@ -98,30 +91,52 @@ export default async function DocumentPage({ params }: { params: Promise<{ caseI
       </aside>
 
       {/* Document content */}
-      <main className="flex-1 overflow-auto" style={{ background: 'var(--bg-base)' }}>
-        <div className="max-w-3xl mx-auto px-12 py-10">
-          <div className="flex items-center gap-2 mb-3">
+      <main style={{ flex: 1, overflow: 'auto', background: 'var(--bg-base)' }}>
+        <div style={{ maxWidth: 720, margin: '0 auto', padding: '40px 48px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
             <span className="status-pill active">{DOC_TYPE_LABELS[doc.doc_type] || doc.doc_type}</span>
             <span className={`status-pill ${STATUS_PILL[doc.status] || 'muted'}`}>{STATUS_LABEL[doc.status] || doc.status}</span>
-            <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>v{doc.current_version}</span>
+            <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>v{doc.current_version}</span>
           </div>
-          <h1 className="text-2xl font-semibold mb-8" style={{ color: 'var(--text-primary)' }}>{doc.title}</h1>
+          {/* Export toolbar */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            <a
+              href={`/api/documents/${docId}/export`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, height: 30, padding: '0 12px', borderRadius: 6, fontSize: 12, fontWeight: 500, color: 'var(--text-secondary)', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', textDecoration: 'none', cursor: 'pointer' }}
+            >
+              <Download style={{ width: 13, height: 13 }} />
+              导出 Word
+            </a>
+            <ShareButton
+              docId={docId}
+              initialShareEnabled={doc.share_enabled}
+              initialShareToken={doc.share_token}
+            />
+          </div>
+
+          <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 32, color: 'var(--text-primary)' }}>{doc.title}</h1>
 
           {latestVersion ? (
-            <div className="rounded-[var(--radius-lg)] p-8 animate-fade-up"
-              style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-card)' }}>
-              <pre className="text-sm whitespace-pre-wrap font-sans leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+            <div style={{ borderRadius: 12, padding: 32, background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-card)' }}>
+              <pre style={{ fontSize: 13, whiteSpace: 'pre-wrap', fontFamily: 'inherit', lineHeight: 1.9, color: 'var(--text-secondary)' }}>
                 {latestVersion.content}
               </pre>
             </div>
           ) : (
-            <div className="text-center py-16 rounded-[var(--radius-lg)] animate-fade-up"
-              style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-card)' }}>
-              <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>暂无内容</p>
+            <div style={{ textAlign: 'center', padding: '64px 0', borderRadius: 12, background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+              <p style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>暂无内容</p>
             </div>
           )}
         </div>
       </main>
+
+      {/* AI Edit Panel */}
+      <EditPanel
+        docId={docId}
+        initialContent={latestVersion?.content || ''}
+      />
     </div>
   )
 }

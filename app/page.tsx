@@ -136,13 +136,8 @@ export default function LandingPage() {
         WebkitBackdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(255,255,255,0.06)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
-            <rect width="40" height="40" rx="10" fill="rgba(255,255,255,0.08)" />
-            <path d="M12 28 L20 12 L28 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            <path d="M15 23 L25 23" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-            <circle cx="20" cy="12" r="2" fill="white"/>
-          </svg>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <img src="/logo.png" alt="Linkmai" style={{ width: 28, height: 28, filter: 'brightness(0) invert(1) drop-shadow(0 0 0.5px #fff) drop-shadow(0 0 0.5px #fff)' }} />
           <span style={{
             fontSize: 14, fontWeight: 700, letterSpacing: '0.02em',
             color: 'transparent',
@@ -151,7 +146,7 @@ export default function LandingPage() {
             backgroundClip: 'text',
             filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.25))',
           }}>
-            灵迈 <span style={{ fontWeight: 400, opacity: 0.55 }}>Linkmai</span>
+            Linkmai
           </span>
         </div>
 
@@ -202,7 +197,7 @@ export default function LandingPage() {
             backgroundClip: 'text',
             filter: 'drop-shadow(0 0 40px rgba(255,255,255,0.18)) drop-shadow(0 2px 12px rgba(255,255,255,0.1))',
           }}>
-            灵迈Linkmai
+            Linkmai
           </h1>
 
           {/* Slogan */}
@@ -217,7 +212,7 @@ export default function LandingPage() {
           </p>
 
           {/* CTA */}
-          <Link href="/login" style={{ textDecoration: 'none' }}>
+          <Link href="/login?invite=true" style={{ textDecoration: 'none' }}>
             <button
               onMouseEnter={() => setBtnHover(true)}
               onMouseLeave={() => { setBtnHover(false); setBtnActive(false) }}

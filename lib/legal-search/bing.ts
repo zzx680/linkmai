@@ -21,6 +21,7 @@ export async function bingLegalSearch(query: string, searchType?: string): Promi
   const pages = data?.webPages?.value || []
 
   return pages.map((p: { name: string; url: string; snippet: string; displayUrl: string }) => ({
+    id: 0,
     title: p.name,
     url: p.url,
     snippet: p.snippet,
@@ -31,6 +32,7 @@ export async function bingLegalSearch(query: string, searchType?: string): Promi
 function getMockResults(query: string): SearchResult[] {
   return [
     {
+      id: 0,
       title: `关于"${query}"的法律规定`,
       url: 'https://www.law.gov.cn',
       snippet: '（示例）根据《中华人民共和国民法典》相关规定...',

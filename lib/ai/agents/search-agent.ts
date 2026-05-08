@@ -38,7 +38,12 @@ export async function runSearchAgent(input: SearchAgentInput): Promise<{
   const args = JSON.parse(tc.function.arguments)
 
   const { bingLegalSearch } = await import('@/lib/legal-search/bing')
-  const searchResults = await bingLegalSearch(args.query || input.query, args.search_type)
+  const rawResults = await bingLegalSearch(args.query || input.query, args.search_type)
+  const searchResults: SearchResult[] = rawResults.map((r, i) => ({ ...r, id: i + 1 }))
+
+  const numberedSources = searchResults
+    .map(r => `[${r.id}] ${r.title} — ${r.source}\n${r.snippet}`)
+    .join('\n\n')
 
   const summaryResponse = await getKimi().chat.completions.create({
     model: AI_MODEL,
@@ -47,7 +52,7 @@ export async function runSearchAgent(input: SearchAgentInput): Promise<{
       { role: 'user', content: `请检索：${input.query}` },
       { role: 'assistant', content: null, tool_calls: choice.message.tool_calls },
       { role: 'tool', tool_call_id: toolCall.id, content: JSON.stringify(searchResults) },
-      { role: 'user', content: '请根据以上检索结果，整理出结构化的摘要，按效力等级排序，标注完整出处。' },
+      { role: 'user', content: `请根据以上检索结果，整理出结构化的摘要，按效力等级排序。\n\n来源列表：\n${numberedSources}\n\n要求：引用来源时使用 [N] 格式标注，如"根据《劳动合同法》第三十六条[1]，..."` },
     ],
   })
 
