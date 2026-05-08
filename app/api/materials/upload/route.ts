@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createMaterial } from '@/lib/data/materials'
-import pdfParse from 'pdf-parse'
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,9 +34,15 @@ export async function POST(req: NextRequest) {
       const buffer = Buffer.from(arrayBuffer)
 
       if (file.name.toLowerCase().endsWith('.pdf')) {
-        const parsed = await pdfParse(buffer)
-        content = parsed.text
-        fileType = 'pdf'
+        try {
+          const pdfParse = (await import('pdf-parse')).default
+          const parsed = await pdfParse(buffer)
+          content = parsed.text
+          fileType = 'pdf'
+        } catch {
+          content = buffer.toString('base64')
+          fileType = 'pdf'
+        }
       } else {
         content = buffer.toString('utf-8')
         fileType = 'text'
