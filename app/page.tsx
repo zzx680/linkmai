@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { Loader2, X } from 'lucide-react'
 
 export default function LandingPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [btnHover, setBtnHover] = useState(false)
   const [btnActive, setBtnActive] = useState(false)
+  const [showContact, setShowContact] = useState(false)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -151,12 +153,12 @@ export default function LandingPage() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <a href="mailto:contact@linkmai.ai"
-            style={{ padding: '8px 16px', borderRadius: 8, fontSize: 14, color: 'rgba(255,255,255,0.5)', textDecoration: 'none', transition: 'color 0.15s' }}
+          <button onClick={() => setShowContact(true)}
+            style={{ padding: '8px 16px', borderRadius: 8, fontSize: 14, color: 'rgba(255,255,255,0.5)', textDecoration: 'none', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 0.15s' }}
             onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
             onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.5)')}>
             联系我们
-          </a>
+          </button>
           <Link href="/login"
             style={{
               padding: '8px 20px', borderRadius: 8, fontSize: 14, fontWeight: 500,
@@ -300,6 +302,70 @@ export default function LandingPage() {
         }} />
       </div>
 
+      {showContact && <ContactModal onClose={() => setShowContact(false)} />}
+    </div>
+  )
+}
+
+function ContactModal({ onClose }: { onClose: () => void }) {
+  const [name, setName] = useState('')
+  const [contact, setContact] = useState('')
+  const [firm, setFirm] = useState('')
+  const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [done, setDone] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleSubmit = async () => {
+    if (!name.trim() || !contact.trim() || !message.trim()) { setError('请填写姓名、联系方式和留言'); return }
+    setLoading(true); setError('')
+    const r = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, contact, firm, message }),
+    })
+    const data = await r.json()
+    if (!r.ok) { setError(data.error || '提交失败'); setLoading(false); return }
+    setDone(true)
+    setLoading(false)
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ width: '100%', maxWidth: 440, background: '#fff', borderRadius: 16, overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid #f0f0f5' }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>联系我们</h2>
+          <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: 8, border: 'none', background: '#f5f5f8', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
+            <X size={16} />
+          </button>
+        </div>
+        <div style={{ padding: '20px 24px' }}>
+          {done ? (
+            <div style={{ textAlign: 'center', padding: '24px 0' }}>
+              <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10l5 5 7-8" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
+              <p style={{ fontSize: 15, fontWeight: 600, color: '#111', marginBottom: 6 }}>已收到您的留言</p>
+              <p style={{ fontSize: 13, color: '#888' }}>我们会在 24 小时内与您联系</p>
+              <button onClick={onClose} style={{ marginTop: 20, height: 40, padding: '0 28px', borderRadius: 10, background: '#111', color: '#fff', fontSize: 13, fontWeight: 500, border: 'none', cursor: 'pointer' }}>关闭</button>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <input value={name} onChange={e => setName(e.target.value)} placeholder="姓名 *" style={{ flex: 1, height: 42, borderRadius: 8, border: 'none', background: '#f5f5f8', padding: '0 14px', fontSize: 14, color: '#111', outline: 'none' }} />
+                <input value={contact} onChange={e => setContact(e.target.value)} placeholder="手机 / 邮箱 *" style={{ flex: 1, height: 42, borderRadius: 8, border: 'none', background: '#f5f5f8', padding: '0 14px', fontSize: 14, color: '#111', outline: 'none' }} />
+              </div>
+              <input value={firm} onChange={e => setFirm(e.target.value)} placeholder="律所（选填）" style={{ height: 42, borderRadius: 8, border: 'none', background: '#f5f5f8', padding: '0 14px', fontSize: 14, color: '#111', outline: 'none' }} />
+              <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="留言内容 *" rows={4} style={{ borderRadius: 8, border: 'none', background: '#f5f5f8', padding: '12px 14px', fontSize: 14, color: '#111', resize: 'none', outline: 'none', fontFamily: 'inherit' }} />
+              {error && <p style={{ fontSize: 12, color: '#dc2626', margin: 0 }}>{error}</p>}
+              <button onClick={handleSubmit} disabled={loading} style={{ height: 44, borderRadius: 10, border: 'none', background: '#111', color: '#fff', fontSize: 14, fontWeight: 500, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                {loading ? <><Loader2 size={14} style={{ animation: 'spin 0.8s linear infinite' }} />提交中...</> : '提交留言'}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   )
 }

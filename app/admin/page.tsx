@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Plus, Trash2, RefreshCw, LogOut, Users, Key, Loader2 } from 'lucide-react'
+import { Plus, Trash2, RefreshCw, LogOut, Users, Key, Loader2, MessageSquare } from 'lucide-react'
 
 type InviteCode = {
   code: string
@@ -25,7 +25,7 @@ type UserRow = {
 }
 
 export default function AdminPage() {
-  const [tab, setTab] = useState<'codes' | 'users'>('codes')
+  const [tab, setTab] = useState<'codes' | 'users' | 'contact'>('codes')
   const [adminEmail, setAdminEmail] = useState('')
   const [authChecked, setAuthChecked] = useState(false)
   const router = useRouter()
@@ -77,7 +77,7 @@ export default function AdminPage() {
 
         {/* Tabs */}
         <div style={{ display: 'flex', gap: 4, marginBottom: 24, background: '#fff', borderRadius: 10, padding: 4, border: '1px solid #ebebf0', width: 'fit-content' }}>
-          {([['codes', Key, '邀请码管理'], ['users', Users, '用户列表']] as const).map(([key, Icon, label]) => (
+          {([['codes', Key, '邀请码管理'], ['users', Users, '用户列表'], ['contact', MessageSquare, '联系管理']] as const).map(([key, Icon, label]) => (
             <button key={key} onClick={() => setTab(key)} style={{
               display: 'flex', alignItems: 'center', gap: 6,
               height: 34, padding: '0 16px', borderRadius: 8, border: 'none',
@@ -93,6 +93,7 @@ export default function AdminPage() {
 
         {tab === 'codes' && <CodesTab />}
         {tab === 'users' && <UsersTab />}
+        {tab === 'contact' && <ContactTab />}
       </main>
 
       <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
@@ -292,6 +293,144 @@ function UsersTab() {
         )}
       </div>
       <p style={{ fontSize: 12, color: '#aaa', marginTop: 12 }}>共 {users.length} 位用户</p>
+    </div>
+  )
+}
+
+// ─── Contact Tab ─────────────────────────────────────────────────────────────
+
+type ContactRow = {
+  id: string
+  name: string
+  contact: string
+  firm: string | null
+  message: string
+  status: 'pending' | 'replied' | 'closed'
+  replied_at: string | null
+  reply_note: string | null
+  created_at: string
+}
+
+function ContactTab() {
+  const [rows, setRows] = useState<ContactRow[]>([])
+  const [loading, setLoading] = useState(true)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [replyNote, setReplyNote] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const load = async () => {
+    setLoading(true)
+    const r = await fetch('/api/admin/contact')
+    if (r.ok) setRows(await r.json())
+    setLoading(false)
+  }
+
+  useEffect(() => { load() }, [])
+
+  const handleReply = async (id: string) => {
+    setSaving(true)
+    await fetch('/api/admin/contact', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status: 'replied', reply_note: replyNote }),
+    })
+    setReplyNote('')
+    setExpandedId(null)
+    await load()
+    setSaving(false)
+  }
+
+  const handleClose = async (id: string) => {
+    await fetch('/api/admin/contact', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status: 'closed' }),
+    })
+    await load()
+  }
+
+  const pending = rows.filter(r => r.status === 'pending').length
+  const replied = rows.filter(r => r.status === 'replied').length
+
+  const formatTime = (ts: string) => new Date(ts).toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+
+  return (
+    <div>
+      {/* Stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 20 }}>
+        {[['总计', rows.length, '#111'], ['待处理', pending, '#d97706'], ['已回复', replied, '#16a34a']].map(([label, val, color]) => (
+          <div key={label as string} style={{ background: '#fff', borderRadius: 10, border: '1px solid #ebebf0', padding: '16px 20px' }}>
+            <p style={{ fontSize: 11, color: '#aaa', marginBottom: 4 }}>{label}</p>
+            <p style={{ fontSize: 24, fontWeight: 700, color: color as string }}>{val}</p>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #ebebf0', overflow: 'hidden' }}>
+        {loading ? (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 48 }}>
+            <Loader2 size={20} style={{ animation: 'spin 0.8s linear infinite', color: '#aaa' }} />
+          </div>
+        ) : rows.length === 0 ? (
+          <p style={{ textAlign: 'center', padding: 48, color: '#aaa', fontSize: 13 }}>暂无联系记录</p>
+        ) : (
+          rows.map((r, i) => (
+            <div key={r.id}>
+              <div
+                onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}
+                style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', borderBottom: i < rows.length - 1 ? '1px solid #f5f5f8' : 'none', cursor: 'pointer' }}
+              >
+                <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 20, background: r.status === 'pending' ? '#fef3c7' : r.status === 'replied' ? '#f0fdf4' : '#f5f5f8', color: r.status === 'pending' ? '#d97706' : r.status === 'replied' ? '#16a34a' : '#aaa' }}>
+                  {r.status === 'pending' ? '待处理' : r.status === 'replied' ? '已回复' : '已关闭'}
+                </span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>{r.name}</span>
+                <span style={{ fontSize: 12, color: '#888' }}>{r.contact}</span>
+                {r.firm && <span style={{ fontSize: 11, color: '#aaa', background: '#f5f5f8', padding: '2px 6px', borderRadius: 4 }}>{r.firm}</span>}
+                <span style={{ fontSize: 12, color: '#aaa', flex: 1 }}>{r.message.slice(0, 40)}{r.message.length > 40 ? '...' : ''}</span>
+                <span style={{ fontSize: 11, color: '#bbb', flexShrink: 0 }}>{formatTime(r.created_at)}</span>
+              </div>
+              {expandedId === r.id && (
+                <div style={{ padding: '16px 20px', background: '#fafafa', borderBottom: i < rows.length - 1 ? '1px solid #f5f5f8' : 'none' }}>
+                  <p style={{ fontSize: 13, color: '#555', lineHeight: 1.8, marginBottom: r.reply_note ? 12 : 0 }}>{r.message}</p>
+                  {r.reply_note && (
+                    <div style={{ background: '#fff', borderRadius: 8, padding: '12px 14px', marginBottom: 12, border: '1px solid #e0e0e8' }}>
+                      <p style={{ fontSize: 11, color: '#aaa', marginBottom: 4 }}>回复</p>
+                      <p style={{ fontSize: 13, color: '#111', lineHeight: 1.7 }}>{r.reply_note}</p>
+                    </div>
+                  )}
+                  {r.status === 'pending' && (
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                      <textarea
+                        value={replyNote}
+                        onChange={e => setReplyNote(e.target.value)}
+                        onClick={e => e.stopPropagation()}
+                        placeholder="回复内容..."
+                        rows={3}
+                        style={{ flex: 1, borderRadius: 8, border: '1px solid #e0e0e8', padding: '10px 12px', fontSize: 13, color: '#111', resize: 'none', outline: 'none', background: '#fff', fontFamily: 'inherit' }}
+                      />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleReply(r.id) }}
+                          disabled={saving || !replyNote.trim()}
+                          style={{ height: 34, padding: '0 16px', borderRadius: 8, border: 'none', background: replyNote.trim() ? '#111' : '#e0e0e8', color: replyNote.trim() ? '#fff' : '#aaa', fontSize: 13, cursor: replyNote.trim() ? 'pointer' : 'not-allowed' }}
+                        >
+                          回复
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleClose(r.id) }}
+                          style={{ height: 34, padding: '0 16px', borderRadius: 8, border: '1px solid #e0e0e8', background: '#fff', color: '#888', fontSize: 13, cursor: 'pointer' }}
+                        >
+                          关闭
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
     </div>
   )
 }
