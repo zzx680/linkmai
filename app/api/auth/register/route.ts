@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { codeStore } from '../sms/send/route'
+import { getStoredCode, deleteStoredCode } from '../sms/send/route'
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
@@ -41,11 +41,11 @@ export async function POST(req: NextRequest) {
 
   // Fallback to Aliyun self-verify
   if (otpError.message.includes('Phone provider') || otpError.message.includes('phone')) {
-    const stored = codeStore.get(phone)
+    const stored = await getStoredCode(phone)
     if (!stored || stored.code !== code || Date.now() > stored.expires) {
       return NextResponse.json({ error: '验证码错误或已过期' }, { status: 401 })
     }
-    codeStore.delete(phone)
+    await deleteStoredCode(phone)
 
     const tempPassword = crypto.randomUUID()
     const { error: signUpError } = await supabase.auth.signUp({ phone: e164, password: tempPassword })

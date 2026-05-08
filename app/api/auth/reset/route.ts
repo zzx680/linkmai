@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { codeStore } from '../sms/send/route'
+import { getStoredCode, deleteStoredCode } from '../sms/send/route'
 
 // POST /api/auth/reset — Reset password via phone OTP
 export async function POST(req: NextRequest) {
@@ -33,11 +33,11 @@ export async function POST(req: NextRequest) {
   const { error: verifyError } = await supabase.auth.verifyOtp({ phone: e164, token: code, type: 'sms' })
   if (verifyError) {
     // Try Aliyun fallback
-    const stored = codeStore.get(phone)
+    const stored = await getStoredCode(phone)
     if (!stored || stored.code !== code || Date.now() > stored.expires) {
       return NextResponse.json({ error: '验证码错误或已过期' }, { status: 401 })
     }
-    codeStore.delete(phone)
+    await deleteStoredCode(phone)
 
     // Sign in with temp approach, then update password
     const tempPw = crypto.randomUUID()

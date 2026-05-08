@@ -18,6 +18,35 @@ function checkRateLimit(key: string): boolean {
   return true
 }
 
+// ── Supabase-based code storage (works with serverless) ──────────────────────
+async function saveCode(phone: string, code: string) {
+  const { createClient } = await import('@/lib/supabase/server')
+  const supabase = await createClient()
+  await supabase.from('sms_codes').upsert({
+    phone,
+    code,
+    expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+  })
+}
+
+async function getStoredCode(phone: string): Promise<{ code: string; expires: number } | null> {
+  const { createClient } = await import('@/lib/supabase/server')
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('sms_codes')
+    .select('code, expires_at')
+    .eq('phone', phone)
+    .single()
+  if (!data) return null
+  return { code: data.code, expires: new Date(data.expires_at).getTime() }
+}
+
+async function deleteStoredCode(phone: string) {
+  const { createClient } = await import('@/lib/supabase/server')
+  const supabase = await createClient()
+  await supabase.from('sms_codes').delete().eq('phone', phone)
+}
+
 // ── Aliyun SMS signing ───────────────────────────────────────────────────────
 function sign(params: Record<string, string>, secret: string) {
   const sorted = Object.keys(params).sort().map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&')
@@ -52,26 +81,25 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ ok: true })
 }
 
-// ── Fallback: Aliyun SMS with in-memory OTP ──────────────────────────────────
+// ── Fallback: Aliyun SMS with Supabase OTP storage ────────────────────────────
 // Used when Supabase phone provider is not configured (dev / early setup)
-const codeStore = new Map<string, { code: string; expires: number }>()
-
 async function sendViaAliyun(phone: string) {
   const accessKeyId = process.env.ALIYUN_SMS_ACCESS_KEY_ID
   const accessKeySecret = process.env.ALIYUN_SMS_ACCESS_KEY_SECRET
   const signName = process.env.ALIYUN_SMS_SIGN_NAME
   const templateCode = process.env.ALIYUN_SMS_TEMPLATE_CODE
 
+  const code = String(Math.floor(100000 + Math.random() * 900000))
+
   if (!accessKeyId || !accessKeySecret || !signName || !templateCode) {
     // Dev fallback: log code to console instead of sending SMS
-    const code = String(Math.floor(100000 + Math.random() * 900000))
-    codeStore.set(phone, { code, expires: Date.now() + 5 * 60 * 1000 })
+    await saveCode(phone, code)
     console.log(`[DEV] SMS code for ${phone}: ${code}`)
     return NextResponse.json({ ok: true, _dev_code: process.env.NODE_ENV === 'development' ? code : undefined })
   }
 
-  const code = String(Math.floor(100000 + Math.random() * 900000))
-  codeStore.set(phone, { code, expires: Date.now() + 5 * 60 * 1000 })
+  // Store code in Supabase before sending
+  await saveCode(phone, code)
 
   const params: Record<string, string> = {
     AccessKeyId: accessKeyId,
@@ -97,6 +125,7 @@ async function sendViaAliyun(phone: string) {
   })
   const data = await res.json()
   if (data.Code !== 'OK') {
+    await deleteStoredCode(phone)
     return NextResponse.json({ error: data.Message || '发送失败' }, { status: 500 })
   }
 
@@ -104,4 +133,4 @@ async function sendViaAliyun(phone: string) {
 }
 
 // Exported for verify route (Aliyun fallback only)
-export { codeStore }
+export { getStoredCode, deleteStoredCode }
