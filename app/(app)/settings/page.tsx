@@ -142,7 +142,7 @@ export default function SettingsPage() {
         {/* Header */}
         <header style={{ height: 56, display: 'flex', alignItems: 'center', padding: '0 28px', background: '#fff', borderBottom: '1px solid #ebebf0', flexShrink: 0, gap: 6 }}>
           <Scale size={15} style={{ color: '#aaa' }} />
-          <span style={{ fontSize: 13, color: '#aaa' }}>工作台</span>
+          <span style={{ fontSize: 13, color: '#aaa' }}>账户</span>
           <span style={{ fontSize: 13, color: '#ccc', margin: '0 2px' }}>/</span>
           <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>设置</span>
         </header>
