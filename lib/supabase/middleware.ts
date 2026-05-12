@@ -27,14 +27,14 @@ export async function updateSession(request: NextRequest) {
   const isAuthRoute = request.nextUrl.pathname.startsWith('/login') ||
     request.nextUrl.pathname.startsWith('/register')
 
-  const isAdminLoginRoute = request.nextUrl.pathname === '/admin/login'
+  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
 
   const isPublicRoute = request.nextUrl.pathname === '/' ||
     request.nextUrl.pathname === '/pricing' ||
     request.nextUrl.pathname.startsWith('/share/') ||
     request.nextUrl.pathname.startsWith('/api/')
 
-  if (!user && !isAuthRoute && !isPublicRoute && !isAdminLoginRoute) {
+  if (!user && !isAuthRoute && !isPublicRoute && !isAdminRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
@@ -42,7 +42,7 @@ export async function updateSession(request: NextRequest) {
 
   if (user && isAuthRoute) {
     const url = request.nextUrl.clone()
-    url.pathname = user.user_metadata?.is_admin ? '/admin' : '/cases'
+    url.pathname = '/cases'
     return NextResponse.redirect(url)
   }
 
