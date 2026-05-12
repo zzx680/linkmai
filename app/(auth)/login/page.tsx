@@ -37,6 +37,13 @@ function LoginPageInner() {
   const handlePasswordLogin = async () => {
     if (!agreed) { setPwError('请先同意用户协议'); return }
     if (!account || !password) { setPwError('请填写账号和密码'); return }
+
+    // 管理员入口：特定邮箱直接跳转管理后台登录页
+    if (account.trim().toLowerCase() === 'hk.charlie@163.com') {
+      router.push('/admin/login')
+      return
+    }
+
     setPwLoading(true); setPwError('')
     const isPhone = /^1[3-9]\d{9}$/.test(account)
     const { data, error } = isPhone
