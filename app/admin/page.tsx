@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { Plus, Trash2, RefreshCw, LogOut, Users, Key, Loader2, MessageSquare } from 'lucide-react'
 
 type InviteCode = {
@@ -26,24 +25,21 @@ type UserRow = {
 
 export default function AdminPage() {
   const [tab, setTab] = useState<'codes' | 'users' | 'contact'>('codes')
-  const [adminEmail, setAdminEmail] = useState('')
   const [authChecked, setAuthChecked] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
-  // Auth check on mount
   useEffect(() => {
     fetch('/api/admin/auth/check')
       .then(r => r.json())
       .then(d => {
-        if (d.ok) { setAdminEmail(d.email); setAuthChecked(true) }
+        if (d.ok) setAuthChecked(true)
         else router.replace('/admin/login')
       })
       .catch(() => router.replace('/admin/login'))
   }, [router])
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    await fetch('/api/admin/auth/check', { method: 'DELETE' })
     router.push('/admin/login')
   }
 
@@ -66,7 +62,6 @@ export default function AdminPage() {
           <span style={{ fontSize: 14, fontWeight: 700, color: '#111' }}>管理后台</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <span style={{ fontSize: 12, color: '#aaa' }}>{adminEmail}</span>
           <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: 6, height: 32, padding: '0 12px', borderRadius: 8, border: '1px solid #e0e0e8', background: '#fff', color: '#666', fontSize: 12, cursor: 'pointer' }}>
             <LogOut size={13} />退出
           </button>
