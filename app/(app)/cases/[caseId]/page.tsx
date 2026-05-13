@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { FileText, Zap, Plus, Clock, ChevronRight, Scale, Search, Folder, LayoutDashboard, Settings, BookOpen, Check, X, Trash2, Calendar, Phone, DollarSign, AlertCircle, Edit2 } from 'lucide-react'
+import { FileText, Zap, Plus, Clock, ChevronRight, Scale, Search, Folder, LayoutDashboard, Settings, BookOpen, Check, X, Trash2, Calendar, Phone, DollarSign, AlertCircle, Edit2, FileSearch } from 'lucide-react'
 import type { Case, Document, CaseDeadline } from '@/lib/types'
 
 const DOC_TYPE_LABELS: Record<string, string> = {
@@ -495,9 +495,16 @@ export default function CaseDetailPage({ params }: { params: Promise<{ caseId: s
             <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #ebebf0', overflow: 'hidden' }}>
               <div style={{ padding: '14px 20px', borderBottom: '1px solid #f0f0f5', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>文书列表</span>
-                <Link href={`/cases/${caseId}/workspace`} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#2563eb', textDecoration: 'none' }}>
-                  <Plus size={13} />AI 起草
-                </Link>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Link href={`/cases/${caseId}/contract-review`} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#555', textDecoration: 'none', padding: '4px 10px', borderRadius: 6, border: '1px solid #e0e0e8', background: '#fff' }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#f5f5f8'}
+                    onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
+                    <FileSearch size={12} />合同审查
+                  </Link>
+                  <Link href={`/cases/${caseId}/workspace`} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#2563eb', textDecoration: 'none' }}>
+                    <Plus size={13} />AI 起草
+                  </Link>
+                </div>
               </div>
 
               {documents.length === 0 ? (
