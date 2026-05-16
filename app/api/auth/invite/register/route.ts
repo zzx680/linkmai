@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createClientForResponse } from '@/lib/supabase/response'
 
 function getAdmin() {
   return createClient(
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
 
   const admin = getAdmin()
 
-  // Re-validate code atomically
+  // 验证邀请码
   const { data: invite, error: inviteErr } = await admin
     .from('invite_codes')
     .select('code, used')
@@ -35,12 +36,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '邀请码无效' }, { status: 400 })
   }
   if (invite.used) {
-    return NextResponse.json({ error: '该邀请码已被使用' }, { status: 400 })
+    return NextResponse.json({ error: '该邀请码已被使用' }, { status: 409 })
   }
 
   const e164 = `+86${phone}`
 
-  // Create user with phone
+  // 创建用户
   const { data: created, error: createErr } = await admin.auth.admin.createUser({
     phone: e164,
     password,
@@ -49,18 +50,26 @@ export async function POST(req: NextRequest) {
 
   if (createErr) {
     if (createErr.message.includes('already registered') || createErr.message.includes('already exists')) {
-      return NextResponse.json({ error: '该手机号已注册' }, { status: 409 })
+      // 手机号已注册，直接登录
+      const res = NextResponse.json({ ok: true })
+      const supabase = createClientForResponse(req, res)
+      const { error: signInErr } = await supabase.auth.signInWithPassword({ phone: e164, password })
+      if (signInErr) return NextResponse.json({ error: '手机号已注册，密码错误' }, { status: 401 })
+      return res
     }
     return NextResponse.json({ error: createErr.message }, { status: 400 })
   }
 
-  const userId = created.user.id
-
-  // Mark invite code as used
+  // 标记邀请码已使用
   await admin
     .from('invite_codes')
-    .update({ used: true, used_by: userId, used_at: new Date().toISOString() })
+    .update({ used: true, used_by: created.user.id, used_at: new Date().toISOString() })
     .eq('code', invite.code)
 
-  return NextResponse.json({ ok: true })
+  // 注册成功后自动登录，写入 session cookie
+  const res = NextResponse.json({ ok: true })
+  const supabase = createClientForResponse(req, res)
+  await supabase.auth.signInWithPassword({ phone: e164, password })
+
+  return res
 }
