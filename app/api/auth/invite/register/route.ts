@@ -10,6 +10,10 @@ function getAdmin() {
   )
 }
 
+function phoneToEmail(phone: string) {
+  return `${phone}@sms.linkmai.com`
+}
+
 export async function POST(req: NextRequest) {
   const { code, phone, password } = await req.json()
 
@@ -39,21 +43,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '该邀请码已被使用' }, { status: 409 })
   }
 
-  const e164 = `+86${phone}`
+  const email = phoneToEmail(phone)
 
-  // 创建用户
+  // 创建用户（用虚拟邮箱，绕过 Phone provider）
   const { data: created, error: createErr } = await admin.auth.admin.createUser({
-    phone: e164,
+    email,
     password,
-    phone_confirm: true,
+    email_confirm: true,
+    user_metadata: { phone },
   })
 
   if (createErr) {
     if (createErr.message.includes('already registered') || createErr.message.includes('already exists')) {
-      // 手机号已注册，直接登录
+      // 已注册，直接登录
       const res = NextResponse.json({ ok: true })
       const supabase = createClientForResponse(req, res)
-      const { error: signInErr } = await supabase.auth.signInWithPassword({ phone: e164, password })
+      const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password })
       if (signInErr) return NextResponse.json({ error: '手机号已注册，密码错误' }, { status: 401 })
       return res
     }
@@ -69,7 +74,10 @@ export async function POST(req: NextRequest) {
   // 注册成功后自动登录，写入 session cookie
   const res = NextResponse.json({ ok: true })
   const supabase = createClientForResponse(req, res)
-  await supabase.auth.signInWithPassword({ phone: e164, password })
+  const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password })
+  if (signInErr) {
+    return NextResponse.json({ error: '注册成功但登录失败，请重试' }, { status: 500 })
+  }
 
   return res
 }

@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClientForResponse } from '@/lib/supabase/response'
 
+function phoneToEmail(phone: string) {
+  return `${phone}@sms.linkmai.com`
+}
+
 export async function POST(req: NextRequest) {
   const { phone, password } = await req.json()
 
@@ -15,7 +19,7 @@ export async function POST(req: NextRequest) {
   const supabase = createClientForResponse(req, res)
 
   const { error } = await supabase.auth.signInWithPassword({
-    phone: `+86${phone}`,
+    email: phoneToEmail(phone),
     password,
   })
 
