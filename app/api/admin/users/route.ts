@@ -27,7 +27,7 @@ export async function GET() {
 
   const result = users.map(u => ({
     id: u.id,
-    email: u.email,
+    email: u.phone ? u.phone.replace(/^\+86/, '') : (u.email ?? ''),
     created_at: u.created_at,
     balance: creditMap[u.id]?.balance ?? 0,
     annual_card_expires_at: creditMap[u.id]?.annual_card_expires_at ?? null,
