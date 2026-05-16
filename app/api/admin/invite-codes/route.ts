@@ -12,7 +12,7 @@ function getAdmin() {
 
 const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 function generateCode(): string {
-  const bytes = new Uint8Array(8)
+  const bytes = new Uint8Array(6)
   crypto.getRandomValues(bytes)
   return Array.from(bytes).map(b => CHARS[b % CHARS.length]).join('')
 }
