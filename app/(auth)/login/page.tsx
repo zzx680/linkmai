@@ -347,7 +347,7 @@ function InviteRegisterModal({ onClose }: { onClose: () => void }) {
                 value={name}
                 onChange={e => setName(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleSetName()}
-                placeholder="请输入您的姓名或称呼"
+                placeholder="例如：宋律师"
                 autoFocus
                 maxLength={20}
                 style={{ height: 44, borderRadius: 8, border: 'none', background: '#f0f2f5', padding: '0 14px', fontSize: 14, color: '#111', outline: 'none', width: '100%', boxSizing: 'border-box' as const }}
