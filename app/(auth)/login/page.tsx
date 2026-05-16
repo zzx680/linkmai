@@ -47,7 +47,7 @@ function LoginPageInner() {
     setPwLoading(true); setPwError('')
     const isPhone = /^1[3-9]\d{9}$/.test(account)
     const { data, error } = isPhone
-      ? await supabase.auth.signInWithPassword({ phone: account, password })
+      ? await supabase.auth.signInWithPassword({ phone: `+86${account}`, password })
       : await supabase.auth.signInWithPassword({ email: account, password })
     if (error) { setPwError(error.message); setPwLoading(false) }
     else if (data.user?.user_metadata?.is_admin) router.push('/admin')
