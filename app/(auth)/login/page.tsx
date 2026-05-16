@@ -168,11 +168,12 @@ export default function LoginPage() {
 // ─── Invite Register Modal ────────────────────────────────────────────────────
 
 function InviteRegisterModal({ onClose }: { onClose: () => void }) {
-  const [step, setStep] = useState<1 | 2>(1)
+  const [step, setStep] = useState<1 | 2 | 3>(1)
   const [code, setCode] = useState('')
   const [email, setEmail] = useState('')
   const [pw, setPw] = useState('')
   const [pwConfirm, setPwConfirm] = useState('')
+  const [name, setName] = useState('')
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -208,10 +209,21 @@ function InviteRegisterModal({ onClose }: { onClose: () => void }) {
     })
     const data = await res.json()
     if (!res.ok) { setError(data.error || '注册失败'); setLoading(false); return }
+    setLoading(false)
+    setStep(3)
+  }
 
-    // Auto sign-in after registration
+  const handleSetName = async () => {
+    if (!name.trim()) { setError('请输入您的称呼'); return }
+    setLoading(true); setError('')
+
+    // Sign in first
     const { error: signInErr } = await supabase.auth.signInWithPassword({ email: email.trim(), password: pw })
-    if (signInErr) { setError('注册成功，请手动登录'); setLoading(false); return }
+    if (signInErr) { setError('登录失败，请手动登录'); setLoading(false); return }
+
+    // Update display name
+    await supabase.auth.updateUser({ data: { full_name: name.trim() } })
+
     router.push('/dashboard')
   }
 
@@ -228,7 +240,7 @@ function InviteRegisterModal({ onClose }: { onClose: () => void }) {
               </button>
             )}
             <h2 style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>
-              {step === 1 ? '输入邀请码' : '设置账号'}
+              {step === 1 ? '输入邀请码' : step === 2 ? '设置账号' : '您的称呼'}
             </h2>
           </div>
           <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: 8, border: 'none', background: '#f5f5f8', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
@@ -238,7 +250,7 @@ function InviteRegisterModal({ onClose }: { onClose: () => void }) {
 
         {/* Step indicator */}
         <div style={{ display: 'flex', gap: 6, padding: '14px 28px 0', alignItems: 'center' }}>
-          {[1, 2].map(s => (
+          {[1, 2, 3].map(s => (
             <div key={s} style={{ height: 3, flex: 1, borderRadius: 2, background: s <= step ? '#111' : '#e0e0e8', transition: 'background 0.2s' }} />
           ))}
         </div>
@@ -323,7 +335,32 @@ function InviteRegisterModal({ onClose }: { onClose: () => void }) {
                 disabled={loading}
                 style={{ width: '100%', height: 44, borderRadius: 8, border: 'none', background: '#111', color: '#fff', fontSize: 14, fontWeight: 500, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
               >
-                {loading ? <><Loader2 size={14} style={{ animation: 'spin 0.8s linear infinite' }} />注册中...</> : '完成注册'}
+                {loading ? <><Loader2 size={14} style={{ animation: 'spin 0.8s linear infinite' }} />注册中...</> : '下一步'}
+              </button>
+            </div>
+          )}
+
+          {/* Step 3: Name */}
+          {step === 3 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <p style={{ fontSize: 13, color: '#888', margin: 0 }}>我该如何称呼您？这将作为您的账户名称。</p>
+              <input
+                type="text"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSetName()}
+                placeholder="请输入您的姓名或称呼"
+                autoFocus
+                maxLength={20}
+                style={{ height: 44, borderRadius: 8, border: 'none', background: '#f0f2f5', padding: '0 14px', fontSize: 14, color: '#111', outline: 'none', width: '100%', boxSizing: 'border-box' as const }}
+              />
+              {error && <p style={{ fontSize: 12, color: '#dc2626', margin: 0 }}>{error}</p>}
+              <button
+                onClick={handleSetName}
+                disabled={loading}
+                style={{ width: '100%', height: 44, borderRadius: 8, border: 'none', background: '#111', color: '#fff', fontSize: 14, fontWeight: 500, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+              >
+                {loading ? <><Loader2 size={14} style={{ animation: 'spin 0.8s linear infinite' }} />进入中...</> : '开始使用'}
               </button>
             </div>
           )}
