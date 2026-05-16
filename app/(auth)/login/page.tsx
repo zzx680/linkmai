@@ -208,6 +208,16 @@ function InviteRegisterModal({ onClose }: { onClose: () => void }) {
       body: JSON.stringify({ code: code.trim(), phone: phone.trim(), password: pw }),
     })
     const data = await res.json()
+
+    // 手机号已注册：直接登录跳到称呼步骤
+    if (res.status === 409) {
+      const { error: signInErr } = await supabase.auth.signInWithPassword({ phone: `+86${phone}`, password: pw })
+      if (signInErr) { setError('手机号已注册，请直接登录'); setLoading(false); return }
+      setLoading(false)
+      setStep(3)
+      return
+    }
+
     if (!res.ok) { setError(data.error || '注册失败'); setLoading(false); return }
     setLoading(false)
     setStep(3)
