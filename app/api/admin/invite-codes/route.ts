@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { requireAdmin } from '@/lib/admin/auth'
 
 function getAdmin() {
   return createClient(
@@ -9,23 +8,6 @@ function getAdmin() {
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { autoRefreshToken: false, persistSession: false } }
   )
-}
-
-async function requireAdmin() {
-  const cookieStore = await cookies()
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: () => {},
-      },
-    }
-  )
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user || !user.user_metadata?.is_admin) return null
-  return user
 }
 
 const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -36,8 +18,7 @@ function generateCode(): string {
 }
 
 export async function GET() {
-  const user = await requireAdmin()
-  if (!user) return NextResponse.json({ error: '无权限' }, { status: 403 })
+  if (!await requireAdmin()) return NextResponse.json({ error: '无权限' }, { status: 403 })
 
   const admin = getAdmin()
   const { data, error } = await admin
@@ -47,7 +28,6 @@ export async function GET() {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Enrich used_by with email
   const userIds = (data ?? []).filter(r => r.used_by).map(r => r.used_by as string)
   const emailMap: Record<string, string> = {}
   if (userIds.length > 0) {
@@ -66,13 +46,11 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const user = await requireAdmin()
-  if (!user) return NextResponse.json({ error: '无权限' }, { status: 403 })
+  if (!await requireAdmin()) return NextResponse.json({ error: '无权限' }, { status: 403 })
 
   const { note } = await req.json()
   const admin = getAdmin()
 
-  // Generate unique code
   let code = generateCode()
   let attempts = 0
   while (attempts < 10) {
@@ -89,15 +67,12 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const user = await requireAdmin()
-  if (!user) return NextResponse.json({ error: '无权限' }, { status: 403 })
+  if (!await requireAdmin()) return NextResponse.json({ error: '无权限' }, { status: 403 })
 
   const { code } = await req.json()
   if (!code) return NextResponse.json({ error: '缺少 code' }, { status: 400 })
 
   const admin = getAdmin()
-
-  // Only allow deleting unused codes
   const { data } = await admin.from('invite_codes').select('used').eq('code', code).single()
   if (!data) return NextResponse.json({ error: '邀请码不存在' }, { status: 404 })
   if (data.used) return NextResponse.json({ error: '已使用的邀请码不能删除' }, { status: 400 })

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { requireAdmin } from '@/lib/admin/auth'
 
 function getAdmin() {
   return createClient(
@@ -11,26 +10,8 @@ function getAdmin() {
   )
 }
 
-async function requireAdmin() {
-  const cookieStore = await cookies()
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: () => {},
-      },
-    }
-  )
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user || !user.user_metadata?.is_admin) return null
-  return user
-}
-
 export async function GET() {
-  const user = await requireAdmin()
-  if (!user) return NextResponse.json({ error: '无权限' }, { status: 403 })
+  if (!await requireAdmin()) return NextResponse.json({ error: '无权限' }, { status: 403 })
 
   const admin = getAdmin()
 
