@@ -29,17 +29,17 @@ export async function GET() {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   const userIds = (data ?? []).filter(r => r.used_by).map(r => r.used_by as string)
-  const emailMap: Record<string, string> = {}
+  const phoneMap: Record<string, string> = {}
   if (userIds.length > 0) {
     const { data: { users } } = await admin.auth.admin.listUsers({ perPage: 1000 })
     for (const u of users) {
-      if (userIds.includes(u.id)) emailMap[u.id] = u.email ?? u.id
+      if (userIds.includes(u.id)) phoneMap[u.id] = u.phone ?? u.email ?? u.id
     }
   }
 
   const enriched = (data ?? []).map(r => ({
     ...r,
-    used_by_email: r.used_by ? (emailMap[r.used_by] ?? r.used_by) : null,
+    used_by_email: r.used_by ? (phoneMap[r.used_by] ?? r.used_by) : null,
   }))
 
   return NextResponse.json(enriched)

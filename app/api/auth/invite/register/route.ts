@@ -10,10 +10,13 @@ function getAdmin() {
 }
 
 export async function POST(req: NextRequest) {
-  const { code, email, password } = await req.json()
+  const { code, phone, password } = await req.json()
 
-  if (!code || !email || !password) {
+  if (!code || !phone || !password) {
     return NextResponse.json({ error: '参数不完整' }, { status: 400 })
+  }
+  if (!/^1[3-9]\d{9}$/.test(phone)) {
+    return NextResponse.json({ error: '手机号格式不正确' }, { status: 400 })
   }
   if (password.length < 6) {
     return NextResponse.json({ error: '密码至少 6 位' }, { status: 400 })
@@ -35,16 +38,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '该邀请码已被使用' }, { status: 400 })
   }
 
-  // Create user (email confirmed immediately, no email verification needed for beta)
+  const e164 = `+86${phone}`
+
+  // Create user with phone
   const { data: created, error: createErr } = await admin.auth.admin.createUser({
-    email: email.trim().toLowerCase(),
+    phone: e164,
     password,
-    email_confirm: true,
+    phone_confirm: true,
   })
 
   if (createErr) {
-    if (createErr.message.includes('already registered') || createErr.message.includes('already been registered')) {
-      return NextResponse.json({ error: '该邮箱已注册' }, { status: 409 })
+    if (createErr.message.includes('already registered') || createErr.message.includes('already exists')) {
+      return NextResponse.json({ error: '该手机号已注册' }, { status: 409 })
     }
     return NextResponse.json({ error: createErr.message }, { status: 400 })
   }

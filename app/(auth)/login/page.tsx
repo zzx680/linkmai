@@ -170,7 +170,7 @@ export default function LoginPage() {
 function InviteRegisterModal({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const [code, setCode] = useState('')
-  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [pw, setPw] = useState('')
   const [pwConfirm, setPwConfirm] = useState('')
   const [name, setName] = useState('')
@@ -197,7 +197,7 @@ function InviteRegisterModal({ onClose }: { onClose: () => void }) {
 
   const handleRegister = async () => {
     if (!agreed) { setError('请先同意用户协议'); return }
-    if (!email.trim()) { setError('请输入邮箱'); return }
+    if (!/^1[3-9]\d{9}$/.test(phone)) { setError('请输入正确的手机号'); return }
     if (pw.length < 6) { setError('密码至少 6 位'); return }
     if (pw !== pwConfirm) { setError('两次密码不一致'); return }
     setLoading(true); setError('')
@@ -205,7 +205,7 @@ function InviteRegisterModal({ onClose }: { onClose: () => void }) {
     const res = await fetch('/api/auth/invite/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: code.trim(), email: email.trim(), password: pw }),
+      body: JSON.stringify({ code: code.trim(), phone: phone.trim(), password: pw }),
     })
     const data = await res.json()
     if (!res.ok) { setError(data.error || '注册失败'); setLoading(false); return }
@@ -217,13 +217,10 @@ function InviteRegisterModal({ onClose }: { onClose: () => void }) {
     if (!name.trim()) { setError('请输入您的称呼'); return }
     setLoading(true); setError('')
 
-    // Sign in first
-    const { error: signInErr } = await supabase.auth.signInWithPassword({ email: email.trim(), password: pw })
+    const { error: signInErr } = await supabase.auth.signInWithPassword({ phone: `+86${phone}`, password: pw })
     if (signInErr) { setError('登录失败，请手动登录'); setLoading(false); return }
 
-    // Update display name
     await supabase.auth.updateUser({ data: { full_name: name.trim() } })
-
     router.push('/dashboard')
   }
 
@@ -281,15 +278,16 @@ function InviteRegisterModal({ onClose }: { onClose: () => void }) {
             </div>
           )}
 
-          {/* Step 2: Email + password */}
+          {/* Step 2: Phone + password */}
           {step === 2 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <p style={{ fontSize: 13, color: '#888', margin: 0 }}>邀请码验证通过，设置你的账号信息。</p>
               <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="邮箱地址"
+                type="tel"
+                value={phone}
+                onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 11))}
+                onKeyDown={e => e.key === 'Enter' && handleRegister()}
+                placeholder="手机号"
                 style={{ height: 44, borderRadius: 8, border: 'none', background: '#f0f2f5', padding: '0 14px', fontSize: 14, color: '#111', outline: 'none', width: '100%', boxSizing: 'border-box' as const }}
               />
               <div style={{ position: 'relative' }}>
