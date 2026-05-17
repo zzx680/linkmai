@@ -24,11 +24,7 @@ export async function POST(req: NextRequest) {
   })
 
   if (error) {
-    return NextResponse.json({
-      error: '手机号或密码错误',
-      _debug: error.message,
-      _url: process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'MISSING',
-    }, { status: 401 })
+    return NextResponse.json({ error: '手机号或密码错误' }, { status: 401 })
   }
 
   return res
