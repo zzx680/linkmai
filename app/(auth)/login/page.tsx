@@ -106,7 +106,7 @@ function LoginPageInner() {
               {agreed && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
             </div>
             <span style={{ fontSize: 12, color: '#888', lineHeight: 1.5 }}>
-              我已阅读并同意<a href="#" style={{ color: '#555', textDecoration: 'none' }}>《用户服务协议》</a>和<a href="#" style={{ color: '#555', textDecoration: 'none' }}>《隐私政策》</a>
+              我已阅读并同意<a href="#" style={{ color: '#555', textDecoration: 'none' }}>《用户服务协议》</a>和<a href="/privacy" target="_blank" style={{ color: '#555', textDecoration: 'none' }}>《隐私政策》</a>
             </span>
           </div>
 
@@ -294,7 +294,7 @@ function InviteRegisterModal({ onClose }: { onClose: () => void }) {
                   {agreed && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                 </div>
                 <span style={{ fontSize: 12, color: '#888', lineHeight: 1.5 }}>
-                  我已阅读并同意<a href="#" style={{ color: '#555', textDecoration: 'none' }}>《用户服务协议》</a>和<a href="#" style={{ color: '#555', textDecoration: 'none' }}>《隐私政策》</a>
+                  我已阅读并同意<a href="#" style={{ color: '#555', textDecoration: 'none' }}>《用户服务协议》</a>和<a href="/privacy" target="_blank" style={{ color: '#555', textDecoration: 'none' }}>《隐私政策》</a>
                 </span>
               </div>
               {error && <p style={{ fontSize: 12, color: '#dc2626', margin: 0 }}>{error}</p>}

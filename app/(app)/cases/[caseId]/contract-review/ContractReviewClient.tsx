@@ -164,6 +164,9 @@ export default function ContractReviewClient({ caseData }: { caseData: Case }) {
                     if (file) await handleFileUpload(file)
                   }} />
 
+                  <p style={{ fontSize: 11, color: '#bbb', textAlign: 'center', marginBottom: 4 }}>
+                    原文不存储，仅保存分析结果
+                  </p>
                   <p style={{ fontSize: 12, color: '#aaa', textAlign: 'center', marginBottom: 12 }}>或直接粘贴合同文本</p>
 
                   <textarea

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import {
   Scale, Zap,
-  User, Shield, CreditCard, Bell, Check, Eye, EyeOff, Gift, Receipt, Loader2
+  User, Shield, CreditCard, Bell, Check, Eye, EyeOff, Gift, Receipt, Loader2, Trash2, AlertTriangle
 } from 'lucide-react'
 import { TOP_UP_PACKS, formatBalance, ANNUAL_CARD_PRICE } from '@/lib/billing/config'
 import Sidebar from '@/app/components/Sidebar'
@@ -31,6 +31,11 @@ export default function SettingsPage() {
   const [pwLoading, setPwLoading] = useState(false)
   const [pwSuccess, setPwSuccess] = useState(false)
   const [pwError, setPwError] = useState('')
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deletePassword, setDeletePassword] = useState('')
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
 
   // Billing state
   const [balance, setBalance] = useState<number | null>(null)
@@ -120,6 +125,20 @@ export default function SettingsPage() {
     if (error) { setPwError(error.message) }
     else { setPwSuccess(true); setPwNew(''); setPwConfirm('') }
     setPwLoading(false)
+  }
+
+  const handleDeleteAccount = async () => {
+    if (!deletePassword) { setDeleteError('请输入密码确认'); return }
+    setDeleteLoading(true); setDeleteError('')
+    const res = await fetch('/api/account/delete', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: deletePassword }),
+    })
+    const data = await res.json()
+    if (!res.ok) { setDeleteError(data.error || '删除失败'); setDeleteLoading(false); return }
+    await supabase.auth.signOut()
+    window.location.href = '/'
   }
 
   const avatarLetter = userEmail ? userEmail[0].toUpperCase() : 'U'
@@ -262,6 +281,55 @@ export default function SettingsPage() {
                         {pwLoading ? '更新中...' : '更新密码'}
                       </button>
                     </form>
+
+                    {/* Delete account */}
+                    <div style={{ marginTop: 32, paddingTop: 24, borderTop: '1px solid #f0f0f5' }}>
+                      <p style={{ fontSize: 13, fontWeight: 600, color: '#333', marginBottom: 6 }}>删除账号</p>
+                      <p style={{ fontSize: 12, color: '#aaa', marginBottom: 16 }}>删除后，您的所有案件、文书、材料及交易记录将被永久清除，不可恢复。</p>
+                      <button onClick={() => { setShowDeleteModal(true); setDeletePassword(''); setDeleteError('') }}
+                        style={{ height: 36, padding: '0 16px', borderRadius: 8, border: '1px solid #fecaca', background: '#fff', color: '#dc2626', fontSize: 13, fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <Trash2 size={13} />删除我的账号
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Delete account modal */}
+              {showDeleteModal && (
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+                  <div style={{ width: '100%', maxWidth: 400, background: '#fff', borderRadius: 14, boxShadow: '0 8px 40px rgba(0,0,0,0.15)', padding: '28px 32px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                      <div style={{ width: 36, height: 36, borderRadius: 10, background: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <AlertTriangle size={16} style={{ color: '#dc2626' }} />
+                      </div>
+                      <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111' }}>确认删除账号</h3>
+                    </div>
+                    <p style={{ fontSize: 13, color: '#555', lineHeight: 1.7, marginBottom: 20 }}>
+                      此操作<strong>不可撤销</strong>。您的所有案件、文书、材料、交易记录将被永久删除。请输入密码确认。
+                    </p>
+                    <input
+                      type="password"
+                      value={deletePassword}
+                      onChange={e => setDeletePassword(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && handleDeleteAccount()}
+                      placeholder="输入当前密码"
+                      autoFocus
+                      style={{ width: '100%', height: 42, borderRadius: 8, border: '1px solid #e0e0e8', background: '#f9f9fb', padding: '0 14px', fontSize: 14, color: '#111', outline: 'none', boxSizing: 'border-box', marginBottom: 10 }}
+                    />
+                    {deleteError && (
+                      <p style={{ fontSize: 12, color: '#dc2626', marginBottom: 10 }}>{deleteError}</p>
+                    )}
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button onClick={() => setShowDeleteModal(false)}
+                        style={{ flex: 1, height: 40, borderRadius: 8, border: '1px solid #e0e0e8', background: '#fff', color: '#555', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>
+                        取消
+                      </button>
+                      <button onClick={handleDeleteAccount} disabled={deleteLoading}
+                        style={{ flex: 1, height: 40, borderRadius: 8, border: 'none', background: '#dc2626', color: '#fff', fontSize: 13, fontWeight: 500, cursor: deleteLoading ? 'not-allowed' : 'pointer', opacity: deleteLoading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                        {deleteLoading ? <><Loader2 size={13} style={{ animation: 'spin 0.8s linear infinite' }} />删除中...</> : '永久删除'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -397,6 +465,7 @@ export default function SettingsPage() {
           </div>
         </main>
       </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   )
 }
