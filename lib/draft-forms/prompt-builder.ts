@@ -1,10 +1,52 @@
-import type { DocType } from '@/lib/types'
+import type { DocType, Case } from '@/lib/types'
 import type { FormData } from './types'
+
+// 从案件数据推断各文书类型的预填字段
+export function prefillFromCase(docType: DocType, caseData: Case): FormData {
+  const c = caseData
+  switch (docType) {
+    case 'complaint':
+      return {
+        ...(c.client_name ? { plaintiff_name: c.client_name } : {}),
+        ...(c.opponent ? { defendant_name: c.opponent } : {}),
+        ...(c.court ? { court: c.court } : {}),
+        ...(c.client_phone ? { plaintiff_phone: c.client_phone } : {}),
+        ...(c.description ? { facts: c.description } : {}),
+      }
+    case 'defense':
+      return {
+        ...(c.client_name ? { defendant_name: c.client_name } : {}),
+        ...(c.opponent ? { plaintiff_name: c.opponent } : {}),
+        ...(c.court ? { court: c.court } : {}),
+        ...(c.case_number ? { case_number: c.case_number } : {}),
+      }
+    case 'motion':
+      return {
+        ...(c.client_name ? { applicant_name: c.client_name } : {}),
+        ...(c.opponent ? { respondent_name: c.opponent } : {}),
+        ...(c.court ? { authority: c.court } : {}),
+        ...(c.case_number ? { case_number: c.case_number } : {}),
+      }
+    case 'lawyer_letter':
+      return {
+        ...(c.client_name ? { client_name: c.client_name } : {}),
+        ...(c.opponent ? { recipient_name: c.opponent } : {}),
+        ...(c.description ? { facts: c.description } : {}),
+      }
+    default:
+      return {}
+  }
+}
 
 export function buildStructuredPrompt(
   docType: DocType,
   formData: FormData,
+  caseData?: Case,
 ): string {
+  // 案件字段优先级：表单填写 > 案件预填
+  const merged: FormData = caseData
+    ? { ...prefillFromCase(docType, caseData), ...formData }
+    : formData
   const builders: Partial<Record<DocType, (d: FormData) => string>> = {
     complaint: buildComplaintPrompt,
     defense: buildDefensePrompt,
@@ -13,7 +55,7 @@ export function buildStructuredPrompt(
     motion: buildMotionPrompt,
     other: buildOtherPrompt,
   }
-  return (builders[docType] ?? buildOtherPrompt)(formData)
+  return (builders[docType] ?? buildOtherPrompt)(merged)
 }
 
 function arr(items: string[] | undefined, prefix = ''): string {

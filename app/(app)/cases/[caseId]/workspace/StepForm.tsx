@@ -11,9 +11,10 @@ interface Props {
   onChange: (key: string, value: string | string[]) => void
   onGenerate: () => void
   isGenerating: boolean
+  prefilled?: Set<string>
 }
 
-export default function StepForm({ schema, formData, onChange, onGenerate, isGenerating }: Props) {
+export default function StepForm({ schema, formData, onChange, onGenerate, isGenerating, prefilled }: Props) {
   const [step, setStep] = useState(0)
   const totalSteps = schema.steps.length
   const currentStepData = schema.steps[step]
@@ -67,6 +68,7 @@ export default function StepForm({ schema, formData, onChange, onGenerate, isGen
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
         {currentStepData.fields.map(field => {
           const value = formData[field.key] ?? ''
+          const isPrefilled = prefilled?.has(field.key) && !!value
 
           if (field.type === 'array') {
             return (
@@ -108,9 +110,10 @@ export default function StepForm({ schema, formData, onChange, onGenerate, isGen
           if (field.type === 'textarea') {
             return (
               <div key={field.key} style={{ gridColumn: field.colSpan === 2 ? '1 / -1' : 'auto' }}>
-                <label style={{ display: 'block', fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>
                   {field.label}
                   {field.required && <span style={{ color: 'var(--danger)', marginLeft: 2 }}>*</span>}
+                  {isPrefilled && <span style={{ fontSize: 10, padding: '1px 5px', borderRadius: 3, background: '#e8f0fe', color: '#2563eb' }}>来自案件</span>}
                 </label>
                 <textarea
                   value={value as string}
@@ -118,7 +121,7 @@ export default function StepForm({ schema, formData, onChange, onGenerate, isGen
                   placeholder={field.placeholder}
                   rows={3}
                   className="input-base"
-                  style={{ resize: 'vertical', lineHeight: 1.6 }}
+                  style={{ resize: 'vertical', lineHeight: 1.6, ...(isPrefilled ? { background: '#f5f8ff', borderColor: '#c7d9ff' } : {}) }}
                 />
                 {field.hint && (
                   <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 3 }}>{field.hint}</p>
@@ -129,9 +132,10 @@ export default function StepForm({ schema, formData, onChange, onGenerate, isGen
 
           return (
             <div key={field.key} style={{ gridColumn: field.colSpan === 2 ? '1 / -1' : 'auto' }}>
-              <label style={{ display: 'block', fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>
                 {field.label}
                 {field.required && <span style={{ color: 'var(--danger)', marginLeft: 2 }}>*</span>}
+                {isPrefilled && <span style={{ fontSize: 10, padding: '1px 5px', borderRadius: 3, background: '#e8f0fe', color: '#2563eb' }}>来自案件</span>}
               </label>
               <input
                 type={field.type === 'date' ? 'date' : 'text'}
@@ -139,7 +143,7 @@ export default function StepForm({ schema, formData, onChange, onGenerate, isGen
                 onChange={e => onChange(field.key, e.target.value)}
                 placeholder={field.placeholder}
                 className="input-base"
-                style={{ height: 38 }}
+                style={{ height: 38, ...(isPrefilled ? { background: '#f5f8ff', borderColor: '#c7d9ff' } : {}) }}
               />
               {field.hint && (
                 <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 3 }}>{field.hint}</p>

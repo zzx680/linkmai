@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import type { Case, DraftTemplate, DocType } from '@/lib/types'
 import { DOC_FORM_SCHEMAS } from '@/lib/draft-forms/schemas'
-import { buildStructuredPrompt } from '@/lib/draft-forms/prompt-builder'
+import { buildStructuredPrompt, prefillFromCase } from '@/lib/draft-forms/prompt-builder'
 import DocTypeSelector from './DocTypeSelector'
 import StepForm from './StepForm'
 import type { FormData } from '@/lib/draft-forms/types'
@@ -24,12 +24,15 @@ export default function GuidedDraftPanel({ caseData, onGenerateStart, onSwitchTo
   const [state, setState] = useState<GuidedState>('type-select')
   const [selectedDocType, setSelectedDocType] = useState<DocType | null>(null)
   const [formData, setFormData] = useState<FormData>({})
+  const [prefilledKeys, setPrefilledKeys] = useState<Set<string>>(new Set())
   const [templates, setTemplates] = useState<DraftTemplate[]>([])
   const [selectedTemplate, setSelectedTemplate] = useState<DraftTemplate | null>(null)
 
   const handleDocTypeSelect = async (docType: DocType) => {
     setSelectedDocType(docType)
-    setFormData({})
+    const prefilled = prefillFromCase(docType, caseData)
+    setFormData(prefilled)
+    setPrefilledKeys(new Set(Object.keys(prefilled)))
     setSelectedTemplate(null)
     try {
       const res = await fetch(`/api/templates?docType=${docType}`)
@@ -53,7 +56,7 @@ export default function GuidedDraftPanel({ caseData, onGenerateStart, onSwitchTo
 
   const handleGenerate = () => {
     if (!selectedDocType) return
-    let instruction = buildStructuredPrompt(selectedDocType, formData)
+    let instruction = buildStructuredPrompt(selectedDocType, formData, caseData)
     if (selectedTemplate) {
       instruction += `\n\n【起草要求（来自模板：${selectedTemplate.title}）】\n${selectedTemplate.prompt_md}`
     }
@@ -134,7 +137,7 @@ export default function GuidedDraftPanel({ caseData, onGenerateStart, onSwitchTo
               </p>
             </div>
           )}
-          <StepForm schema={schema} formData={formData} onChange={handleFormChange} onGenerate={handleGenerate} isGenerating={false} />
+          <StepForm schema={schema} formData={formData} onChange={handleFormChange} onGenerate={handleGenerate} isGenerating={false} prefilled={prefilledKeys} />
         </>
       )}
 
