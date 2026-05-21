@@ -1,4 +1,4 @@
-import { getKimi, AI_MODEL } from '@/lib/ai/kimi'
+import { getDeepSeek, AI_MODEL } from '@/lib/ai/deepseek'
 import { tools } from '@/lib/ai/tools'
 import { SEARCH_SYSTEM_PROMPT } from '@/lib/ai/prompts'
 import type { SearchResult } from '@/lib/types'
@@ -18,7 +18,7 @@ export async function runSearchAgent(input: SearchAgentInput): Promise<{
     { role: 'user', content: `请检索：${input.query}` },
   ]
 
-  const response = await getKimi().chat.completions.create({
+  const response = await getDeepSeek().chat.completions.create({
     model: AI_MODEL,
     messages,
     tools,
@@ -45,7 +45,7 @@ export async function runSearchAgent(input: SearchAgentInput): Promise<{
     .map(r => `[${r.id}] ${r.title} — ${r.source}\n${r.snippet}`)
     .join('\n\n')
 
-  const summaryResponse = await getKimi().chat.completions.create({
+  const summaryResponse = await getDeepSeek().chat.completions.create({
     model: AI_MODEL,
     messages: [
       { role: 'system', content: SEARCH_SYSTEM_PROMPT },

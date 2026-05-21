@@ -1,4 +1,4 @@
-import { getKimi, AI_MODEL } from '@/lib/ai/kimi'
+import { getDeepSeek, AI_MODEL } from '@/lib/ai/deepseek'
 import { tools, DOC_TEMPLATES } from '@/lib/ai/tools'
 import { DRAFT_SYSTEM_PROMPT } from '@/lib/ai/prompts'
 import type { StreamChunk, DraftPlan, Json } from '@/lib/types'
@@ -62,7 +62,7 @@ export async function* runDraftAgent(input: DraftAgentInput): AsyncGenerator<Str
     let fullContent = ''
     const accToolCalls: AccumulatedToolCall[] = []
 
-    const stream = await getKimi().chat.completions.create({
+    const stream = await getDeepSeek().chat.completions.create({
       model: AI_MODEL,
       messages,
       tools,

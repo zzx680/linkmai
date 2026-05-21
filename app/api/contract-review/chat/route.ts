@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import { getKimi, AI_MODEL } from '@/lib/ai/kimi'
+import { getDeepSeek, AI_MODEL } from '@/lib/ai/deepseek'
 
 const REVIEW_SYSTEM_PROMPT = (context: string) => `你是一位资深中国执业律师，正在帮助审查一份合同。
 
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        const response = await getKimi().chat.completions.create({
+        const response = await getDeepSeek().chat.completions.create({
           model: AI_MODEL,
           messages: [
             { role: 'system', content: REVIEW_SYSTEM_PROMPT(extractionContext || '（暂无结构化分析结果）') },

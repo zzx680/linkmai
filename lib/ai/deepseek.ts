@@ -4,7 +4,7 @@ export const AI_MODEL = 'deepseek-chat'
 
 let _client: OpenAI | null = null
 
-export function getKimi(): OpenAI {
+export function getDeepSeek(): OpenAI {
   if (!_client) {
     _client = new OpenAI({
       apiKey: process.env.DEEPSEEK_API_KEY || 'placeholder',

@@ -1,4 +1,4 @@
-import { getKimi, AI_MODEL } from '@/lib/ai/kimi'
+import { getDeepSeek, AI_MODEL } from '@/lib/ai/deepseek'
 import { DOC_TEMPLATES } from '@/lib/ai/tools'
 import type { DraftPlan } from '@/lib/types'
 
@@ -38,7 +38,7 @@ export async function runPlanner(input: PlannerInput): Promise<DraftPlan> {
     { role: 'user' as const, content: `案件信息：\n${input.caseContext}\n\n文书类型：${input.docType}\n用户指令：${input.instruction}${templateHint}` },
   ]
 
-  const response = await getKimi().chat.completions.create({
+  const response = await getDeepSeek().chat.completions.create({
     model: AI_MODEL,
     messages,
     temperature: 0.3,

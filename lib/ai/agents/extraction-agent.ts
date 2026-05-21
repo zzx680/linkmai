@@ -1,4 +1,4 @@
-import { getKimi, AI_MODEL } from '@/lib/ai/kimi'
+import { getDeepSeek, AI_MODEL } from '@/lib/ai/deepseek'
 import type { ExtractionColumn, CellFlag, CellCitation } from '@/lib/types'
 
 interface ExtractionInput {
@@ -70,7 +70,7 @@ ${columnPrompt}
 材料内容：
 ${input.materialContent.slice(0, 12000)}`
 
-  const response = await getKimi().chat.completions.create({
+  const response = await getDeepSeek().chat.completions.create({
     model: AI_MODEL,
     messages: [
       { role: 'system', content: EXTRACTION_PROMPT },

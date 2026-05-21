@@ -1,0 +1,26 @@
+- generic [active] [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e72] [cursor=pointer]:
+    - img [ref=e73]
+  - alert [ref=e76]
+  - generic [ref=e77]:
+    - complementary [ref=e78]:
+      - generic [ref=e81]: LinkMai
+      - navigation [ref=e82]:
+        - generic [ref=e83] [cursor=pointer]:
+          - img [ref=e84]
+          - generic [ref=e86]: 案件管理
+        - link "法律检索" [ref=e87] [cursor=pointer]:
+          - /url: /search
+          - img [ref=e88]
+          - generic [ref=e91]: 法律检索
+      - button "退出登录" [ref=e93] [cursor=pointer]:
+        - img [ref=e94]
+        - text: 退出登录
+    - main [ref=e97]:
+      - generic [ref=e99]:
+        - generic [ref=e100]:
+          - heading "案件管理" [level=1] [ref=e101]
+          - paragraph [ref=e102]: 管理你的所有案件和法律文书
+        - button "新建案件" [ref=e103] [cursor=pointer]:
+          - img [ref=e104]
+          - text: 新建案件
