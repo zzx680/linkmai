@@ -38,13 +38,7 @@ export async function runPlanner(input: PlannerInput): Promise<DraftPlan> {
     { role: 'user' as const, content: `案件信息：\n${input.caseContext}\n\n文书类型：${input.docType}\n用户指令：${input.instruction}${templateHint}` },
   ]
 
-  const client = getKimi()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const debugBaseURL = (client as any).baseURL ?? (client as any)._options?.baseURL ?? 'unknown'
-  const debugKey = (process.env.DEEPSEEK_API_KEY ?? 'missing').slice(0, 8) + '...'
-  console.log('[planner] baseURL:', debugBaseURL, 'key prefix:', debugKey)
-
-  const response = await client.chat.completions.create({
+  const response = await getKimi().chat.completions.create({
     model: AI_MODEL,
     messages,
     temperature: 0.3,
