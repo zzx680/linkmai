@@ -1,0 +1,74 @@
+.login-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-hero {
+  margin-bottom: 30rpx;
+}
+
+.login-mark {
+  width: 112rpx;
+  height: 112rpx;
+  margin-bottom: 26rpx;
+  border-radius: 18rpx;
+  background: #123d36;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: 860;
+  box-shadow: 0 24rpx 56rpx rgba(18, 61, 54, 0.2);
+}
+
+.copy {
+  margin-top: 18rpx;
+  line-height: 1.55;
+}
+
+.auth-card {
+  padding: 28rpx;
+}
+
+.auth-row {
+  min-height: 72rpx;
+  display: flex;
+  align-items: center;
+  color: #6b7471;
+  border-bottom: 1rpx solid #edf1ef;
+}
+
+.auth-row:last-child {
+  border-bottom: 0;
+}
+
+.agree-row {
+  margin: auto 0 28rpx;
+  padding-top: 42rpx;
+  display: flex;
+  gap: 16rpx;
+  color: #6b7471;
+  line-height: 1.55;
+  font-size: 24rpx;
+}
+
+.check {
+  flex: 0 0 auto;
+  width: 34rpx;
+  height: 34rpx;
+  margin-top: 4rpx;
+  border: 2rpx solid #b7c4bf;
+  border-radius: 8rpx;
+}
+
+.checked {
+  border-color: #123d36;
+  background: #123d36;
+}
+
+.link {
+  color: #123d36;
+  font-weight: 760;
+}
+

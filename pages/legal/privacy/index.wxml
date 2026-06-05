@@ -1,0 +1,12 @@
+<view class="page legal-page">
+  <view class="title">隐私政策摘要</view>
+  <view class="card legal-card">
+    <view class="section-title">我们会处理哪些信息</view>
+    <view class="paragraph">微信身份、手机号、事故信息、车辆信息、材料图片、医疗票据、收入证明、订单信息。</view>
+    <view class="section-title">敏感信息</view>
+    <view class="paragraph">病历、身份证件、收入证明、车牌、保险单等会单独授权，并进行加密和脱敏展示。</view>
+    <view class="section-title">用户权利</view>
+    <view class="paragraph">你可以申请访问、更正、删除案件材料，也可以申请注销账号。</view>
+  </view>
+</view>
+

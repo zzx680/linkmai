@@ -1,0 +1,53 @@
+<view class="page home-page">
+  <view class="hero">
+    <view>
+      <text class="eyebrow">linkmai</text>
+      <view class="title">交通事故自助处理助手</view>
+    </view>
+    <view class="hero-mark">LM</view>
+  </view>
+
+  <button class="primary-button start-button" bindtap="startCase">
+    开始处理事故
+  </button>
+
+  <view class="card current-card">
+    <view class="card-top">
+      <view>
+        <view class="section-title">{{currentCase.title}}</view>
+        <text class="muted case-plate">{{currentCase.plate}}</text>
+      </view>
+      <text class="pill risk-mid">风险 {{currentCase.riskLevel}}</text>
+    </view>
+
+    <view class="next-box">
+      <text class="muted">下一步</text>
+      <view class="next-action">{{currentCase.nextAction}}</view>
+      <text class="muted">{{currentCase.nextActionTime}}</text>
+    </view>
+
+    <view class="progress-track">
+      <view class="progress-fill" style="width: {{currentCase.progress}}%;"></view>
+    </view>
+
+    <button class="secondary-button" bindtap="openCase">继续处理</button>
+  </view>
+
+  <view class="quick-grid">
+    <view
+      wx:for="{{quickActions}}"
+      wx:key="label"
+      class="quick-item card"
+      data-path="{{item.path}}"
+      bindtap="openQuick"
+    >
+      <view class="quick-icon">{{index + 1}}</view>
+      <text>{{item.label}}</text>
+    </view>
+  </view>
+
+  <view class="notice">
+    复杂事故、重伤、酒驾、逃逸等情况将建议人工复核。
+  </view>
+</view>
+

@@ -1,0 +1,67 @@
+.report-hero {
+  margin-bottom: 24rpx;
+}
+
+.amount {
+  margin: 14rpx 0;
+  color: #123d36;
+  font-size: 54rpx;
+  font-weight: 860;
+}
+
+.warning {
+  padding: 20rpx 22rpx;
+  border-left: 6rpx solid #b7791f;
+  border-radius: 10rpx;
+  background: #fff7e8;
+  color: #6b520f;
+  line-height: 1.45;
+}
+
+.item-list {
+  margin-bottom: 26rpx;
+  padding: 8rpx 24rpx;
+}
+
+.claim-row {
+  min-height: 132rpx;
+  display: flex;
+  justify-content: space-between;
+  gap: 18rpx;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #edf1ef;
+}
+
+.claim-row:last-child {
+  border-bottom: 0;
+}
+
+.claim-name {
+  font-size: 30rpx;
+  font-weight: 760;
+}
+
+.claim-detail {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  line-height: 1.45;
+}
+
+.claim-side {
+  min-width: 170rpx;
+  text-align: right;
+}
+
+.claim-amount {
+  display: block;
+  color: #123d36;
+  font-size: 30rpx;
+  font-weight: 800;
+}
+
+.evidence {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 22rpx;
+}
+

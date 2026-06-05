@@ -1,0 +1,49 @@
+.case-hero {
+  margin-bottom: 28rpx;
+}
+
+.meta-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20rpx;
+  margin-top: 22rpx;
+  color: #6b7471;
+}
+
+.next-card,
+.progress-card {
+  padding: 28rpx;
+  margin-bottom: 22rpx;
+}
+
+.next-action {
+  margin: 10rpx 0 20rpx;
+  color: #123d36;
+  font-size: 36rpx;
+  font-weight: 800;
+}
+
+.task-row {
+  min-height: 76rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1rpx solid #edf1ef;
+}
+
+.task-row:last-child {
+  border-bottom: 0;
+}
+
+.task-status {
+  color: #123d36;
+  font-weight: 760;
+}
+
+.action-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+

@@ -1,0 +1,35 @@
+<view class="page intake-page">
+  <view class="progress-head">
+    <text class="eyebrow">事故问诊</text>
+    <text class="muted">{{step + 1}} / {{questions.length}}</text>
+  </view>
+
+  <view class="bar">
+    <view class="bar-fill" style="width: {{(step + 1) * 100 / questions.length}}%;"></view>
+  </view>
+
+  <view class="question-card card">
+    <view class="section-title">{{questions[step].title}}</view>
+    <view class="hint">{{questions[step].hint}}</view>
+
+    <view class="option-list">
+      <button
+        wx:for="{{questions[step].options}}"
+        wx:key="*this"
+        class="option {{answers[step] === item ? 'option-active' : ''}}"
+        data-value="{{item}}"
+        bindtap="choose"
+      >
+        {{item}}
+      </button>
+    </view>
+  </view>
+
+  <view class="bottom-actions">
+    <button class="secondary-button" bindtap="prev">上一步</button>
+    <button class="primary-button" bindtap="next">
+      {{step === questions.length - 1 ? '生成案件看板' : '继续'}}
+    </button>
+  </view>
+</view>
+

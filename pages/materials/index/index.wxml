@@ -1,0 +1,29 @@
+<view class="page">
+  <view class="material-head">
+    <text class="eyebrow">材料</text>
+    <view class="title">把证据整理清楚</view>
+    <view class="muted copy">每份材料都会标记用途和状态，补齐后再生成测算会更稳。</view>
+  </view>
+
+  <view wx:for="{{materials}}" wx:key="group" class="group">
+    <view class="section-title group-title">{{item.group}}</view>
+    <view
+      wx:for="{{item.items}}"
+      wx:for-item="material"
+      wx:key="name"
+      class="card material-card"
+    >
+      <view class="material-info">
+        <view class="material-name">{{material.name}}</view>
+        <view class="muted purpose">{{material.purpose}}</view>
+      </view>
+      <view class="material-side">
+        <text class="pill {{material.status === '已通过' ? 'risk-low' : material.status === '需补充' ? 'risk-mid' : ''}}">
+          {{material.status}}
+        </text>
+        <button class="upload-button" data-name="{{material.name}}" bindtap="upload">上传</button>
+      </view>
+    </view>
+  </view>
+</view>
+

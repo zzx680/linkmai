@@ -1,0 +1,32 @@
+<view class="page">
+  <view class="checkout-head">
+    <text class="eyebrow">计费</text>
+    <view class="title">选择你需要的处理包</view>
+    <view class="muted copy">支付前会明确包含内容、交付方式和退款规则。</view>
+  </view>
+
+  <view
+    wx:for="{{products}}"
+    wx:key="sku"
+    class="card product-card {{selectedSku === item.sku ? 'selected' : ''}}"
+    data-sku="{{item.sku}}"
+    bindtap="select"
+  >
+    <view>
+      <view class="product-name">{{item.name}}</view>
+      <view class="muted product-desc">{{item.desc}}</view>
+    </view>
+    <text class="product-price">{{item.price}}</text>
+  </view>
+
+  <view class="card limit-card">
+    <view class="section-title">服务说明</view>
+    <view class="limit-line">文书为辅助生成草稿。</view>
+    <view class="limit-line">测算金额不保证最终赔偿结果。</view>
+    <view class="limit-line">复杂案件可能需要人工复核。</view>
+    <view class="limit-line">支付后会按服务进度适用退款规则。</view>
+  </view>
+
+  <button class="primary-button" bindtap="pay">微信支付</button>
+</view>
+

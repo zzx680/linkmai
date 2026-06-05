@@ -1,0 +1,28 @@
+<view class="page login-page">
+  <view class="login-hero">
+    <view class="login-mark">LM</view>
+    <text class="eyebrow">登录 linkmai</text>
+    <view class="title">创建案件前，需要确认你的授权</view>
+    <view class="muted copy">我们会用微信身份建立案件记录。上传病历、身份证、收入证明等敏感材料前，会再次单独征得授权。</view>
+  </view>
+
+  <view class="card auth-card">
+    <view class="section-title">将用于</view>
+    <view class="auth-row">创建和保存你的事故案件</view>
+    <view class="auth-row">关联订单和服务包权益</view>
+    <view class="auth-row">在需要时发送案件处理提醒</view>
+  </view>
+
+  <view class="agree-row" bindtap="toggleAgree">
+    <view class="check {{agreed ? 'checked' : ''}}"></view>
+    <view>
+      我已阅读并同意
+      <text class="link" catchtap="openTerms">《用户协议》</text>
+      和
+      <text class="link" catchtap="openPrivacy">《隐私政策》</text>
+    </view>
+  </view>
+
+  <button class="primary-button" bindtap="login">微信登录并继续</button>
+</view>
+

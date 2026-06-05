@@ -1,0 +1,54 @@
+.checkout-head {
+  margin-bottom: 28rpx;
+}
+
+.copy {
+  margin-top: 14rpx;
+  line-height: 1.5;
+}
+
+.product-card {
+  min-height: 150rpx;
+  margin-bottom: 18rpx;
+  padding: 26rpx;
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+  border-color: #e1e7e4;
+}
+
+.product-card.selected {
+  border-color: #123d36;
+  background: #f2f7f5;
+}
+
+.product-name {
+  font-size: 32rpx;
+  font-weight: 800;
+}
+
+.product-desc {
+  margin-top: 10rpx;
+  line-height: 1.45;
+  font-size: 24rpx;
+}
+
+.product-price {
+  min-width: 120rpx;
+  color: #123d36;
+  font-size: 32rpx;
+  font-weight: 860;
+  text-align: right;
+}
+
+.limit-card {
+  margin: 28rpx 0;
+  padding: 26rpx;
+}
+
+.limit-line {
+  margin-top: 16rpx;
+  color: #6b7471;
+  line-height: 1.45;
+}
+

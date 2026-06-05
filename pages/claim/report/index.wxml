@@ -1,0 +1,25 @@
+<view class="page">
+  <view class="report-hero">
+    <text class="eyebrow">赔偿测算</text>
+    <view class="amount">{{currentCase.estimateRange}}</view>
+    <view class="warning">
+      该金额为辅助测算，最终以协商、保险审核、调解或裁判结果为准。
+    </view>
+  </view>
+
+  <view class="card item-list">
+    <view wx:for="{{claimItems}}" wx:key="name" class="claim-row">
+      <view>
+        <view class="claim-name">{{item.name}}</view>
+        <view class="muted claim-detail">{{item.detail}}</view>
+      </view>
+      <view class="claim-side">
+        <text class="claim-amount">{{item.amount}}</text>
+        <text class="muted evidence">{{item.evidence}}</text>
+      </view>
+    </view>
+  </view>
+
+  <button class="primary-button" bindtap="checkout">生成理赔材料包</button>
+</view>
+

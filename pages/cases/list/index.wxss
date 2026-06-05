@@ -1,0 +1,42 @@
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28rpx;
+}
+
+.small-button {
+  min-width: 120rpx;
+  min-height: 68rpx;
+  padding: 0 20rpx;
+}
+
+.case-row {
+  padding: 28rpx;
+}
+
+.row-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.row-next {
+  margin: 28rpx 0 18rpx;
+  color: #123d36;
+  font-weight: 760;
+}
+
+.progress-track {
+  height: 12rpx;
+  overflow: hidden;
+  border-radius: 999rpx;
+  background: #e1e7e4;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: #123d36;
+}
+
