@@ -7,8 +7,18 @@ const caseSummary = {
   nextAction: "上传医疗发票和病历",
   nextActionTime: "预计 2 分钟",
   progress: 62,
-  estimateRange: "¥18,600 - ¥24,300"
+  estimateRange: "¥18,600 - ¥24,300",
+  unlocked: ["基础问诊", "材料清单"],
+  pendingCount: 4
 };
+
+const stages = [
+  { label: "建档", status: "done" },
+  { label: "补材料", status: "active" },
+  { label: "测算", status: "ready" },
+  { label: "协商", status: "idle" },
+  { label: "文书", status: "idle" }
+];
 
 const tasks = [
   { title: "事故信息", status: "已完成" },
@@ -88,27 +98,41 @@ const products = [
     sku: "report",
     name: "测算报告",
     price: "¥29",
-    desc: "赔偿项目拆分、金额区间测算、缺失材料清单"
+    desc: "赔偿项目拆分、金额区间测算、缺失材料清单",
+    includes: ["赔偿项目拆分", "金额区间测算", "缺失材料清单"],
+    excludes: ["人工审核", "正式律师意见", "代为沟通"]
   },
   {
     sku: "claim_pack",
     name: "理赔材料包",
     price: "¥89",
-    desc: "测算报告、理赔沟通稿、证据目录、理赔函草稿"
+    badge: "推荐",
+    desc: "测算报告、理赔沟通稿、证据目录、理赔函草稿",
+    includes: ["测算报告", "理赔沟通稿", "证据目录", "理赔函草稿"],
+    excludes: ["保证赔偿金额", "律师代理", "法院提交"]
   },
   {
     sku: "manual_review",
     name: "人工复核",
     price: "¥299 起",
-    desc: "专业人员查看材料，标记风险点并给出处理建议"
+    desc: "专业人员查看材料，标记风险点并给出处理建议",
+    includes: ["材料复核", "风险点标记", "下一步建议"],
+    excludes: ["诉讼代理", "结果承诺", "保险公司内部审核"]
   }
+];
+
+const documentDrafts = [
+  { name: "理赔函草稿", status: "可生成" },
+  { name: "协商沟通稿", status: "可生成" },
+  { name: "证据目录", status: "需补材料" }
 ];
 
 module.exports = {
   caseSummary,
+  stages,
   tasks,
   materials,
   claimItems,
-  products
+  products,
+  documentDrafts
 };
-

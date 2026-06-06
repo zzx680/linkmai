@@ -13,20 +13,39 @@
     bindtap="select"
   >
     <view>
+      <view class="badge-line" wx:if="{{item.badge}}">
+        <text class="pill risk-low">{{item.badge}}</text>
+      </view>
       <view class="product-name">{{item.name}}</view>
       <view class="muted product-desc">{{item.desc}}</view>
+      <view class="included">
+        <text wx:for="{{item.includes}}" wx:key="*this" class="mini-tag">{{item}}</text>
+      </view>
     </view>
     <text class="product-price">{{item.price}}</text>
   </view>
 
   <view class="card limit-card">
     <view class="section-title">服务说明</view>
-    <view class="limit-line">文书为辅助生成草稿。</view>
-    <view class="limit-line">测算金额不保证最终赔偿结果。</view>
-    <view class="limit-line">复杂案件可能需要人工复核。</view>
-    <view class="limit-line">支付后会按服务进度适用退款规则。</view>
+    <view class="limit-grid">
+      <view>
+        <view class="limit-label">交付方式</view>
+        <view class="limit-line">支付后在小程序内生成报告或草稿</view>
+      </view>
+      <view>
+        <view class="limit-label">不包含</view>
+        <view class="limit-line">律师代理、结果承诺、代提交材料</view>
+      </view>
+      <view>
+        <view class="limit-label">退款</view>
+        <view class="limit-line">未开始生成可申请退款，已生成按规则处理</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="warning-panel pay-warning">
+    文书为辅助生成草稿；测算金额不保证最终赔偿结果；复杂案件可能需要人工复核。
   </view>
 
   <button class="primary-button" bindtap="pay">微信支付</button>
 </view>
-

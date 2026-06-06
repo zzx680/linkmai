@@ -11,9 +11,55 @@
   color: #6b7471;
 }
 
+.stage-card {
+  padding: 22rpx 12rpx;
+  margin-bottom: 22rpx;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8rpx;
+}
+
+.stage-item {
+  color: #8a9692;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  font-size: 20rpx;
+  font-weight: 700;
+}
+
+.stage-dot {
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  background: #d4ded9;
+}
+
+.stage-item.done,
+.stage-item.active,
+.stage-item.ready {
+  color: #123d36;
+}
+
+.stage-item.done .stage-dot,
+.stage-item.active .stage-dot,
+.stage-item.ready .stage-dot {
+  background: #123d36;
+}
+
+.stage-item.active .stage-dot {
+  box-shadow: 0 0 0 8rpx rgba(18, 61, 54, 0.13);
+}
+
 .next-card,
-.progress-card {
+.progress-card,
+.documents-card {
   padding: 28rpx;
+  margin-bottom: 22rpx;
+}
+
+.risk-note {
   margin-bottom: 22rpx;
 }
 
@@ -41,9 +87,20 @@
   font-weight: 760;
 }
 
+.doc-row {
+  min-height: 74rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1rpx solid #edf1ef;
+}
+
+.doc-row:last-child {
+  border-bottom: 0;
+}
+
 .action-stack {
   display: flex;
   flex-direction: column;
   gap: 18rpx;
 }
-

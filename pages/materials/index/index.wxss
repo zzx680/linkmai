@@ -22,6 +22,18 @@
   display: flex;
   justify-content: space-between;
   gap: 22rpx;
+  position: relative;
+}
+
+.material-card::before {
+  content: "";
+  width: 6rpx;
+  height: 70rpx;
+  border-radius: 999rpx;
+  background: #e1e7e4;
+  position: absolute;
+  left: 0;
+  top: 26rpx;
 }
 
 .material-info {
@@ -53,3 +65,6 @@
   font-size: 24rpx;
 }
 
+.danger-panel {
+  margin-top: 10rpx;
+}

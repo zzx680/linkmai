@@ -1,9 +1,11 @@
-const { caseSummary, tasks } = require("../../../utils/mock");
+const { caseSummary, tasks, stages, documentDrafts } = require("../../../utils/mock");
 
 Page({
   data: {
     currentCase: caseSummary,
-    tasks
+    tasks,
+    stages,
+    documentDrafts
   },
 
   goMaterials() {
@@ -16,6 +18,9 @@ Page({
 
   goCheckout() {
     wx.navigateTo({ url: "/pages/orders/checkout/index" });
+  },
+
+  goDocuments() {
+    wx.navigateTo({ url: "/pages/documents/index/index" });
   }
 });
-

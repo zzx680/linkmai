@@ -1,0 +1,31 @@
+<view class="page">
+  <view class="doc-head">
+    <text class="eyebrow">文书草稿</text>
+    <view class="title">把协商材料准备好</view>
+    <view class="muted copy">所有文书均为辅助草稿，正式使用前需要你核对，复杂案件建议人工复核。</view>
+  </view>
+
+  <view
+    wx:for="{{documentDrafts}}"
+    wx:key="name"
+    class="card doc-card"
+  >
+    <view>
+      <view class="doc-name">{{item.name}}</view>
+      <view class="muted doc-desc">
+        {{item.name === '证据目录' ? '整理已上传材料，形成证据清单。' : '根据案件信息生成可复制的沟通文本。'}}
+      </view>
+    </view>
+    <view class="doc-side">
+      <text class="pill {{item.status === '可生成' ? 'risk-low' : 'risk-mid'}}">{{item.status}}</text>
+      <button class="upload-button" data-name="{{item.name}}" bindtap="generate">
+        {{item.status === '可生成' ? '生成' : '去补材料'}}
+      </button>
+    </view>
+  </view>
+
+  <view class="warning-panel">
+    草稿内容不构成正式律师意见，不保证协商、调解或裁判结果。
+  </view>
+</view>
+

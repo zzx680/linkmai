@@ -8,11 +8,22 @@
     </view>
   </view>
 
+  <view class="card stage-card">
+    <view wx:for="{{stages}}" wx:key="label" class="stage-item {{item.status}}">
+      <view class="stage-dot"></view>
+      <text>{{item.label}}</text>
+    </view>
+  </view>
+
   <view class="card next-card">
     <text class="muted">下一步</text>
     <view class="next-action">{{currentCase.nextAction}}</view>
     <text class="muted">{{currentCase.nextActionTime}}</text>
     <button class="primary-button" bindtap="goMaterials">上传缺失材料</button>
+  </view>
+
+  <view class="warning-panel risk-note">
+    当前案件存在材料不确定项。测算结果会受医疗发票、收入证明和护理天数影响。
   </view>
 
   <view class="card progress-card">
@@ -23,9 +34,17 @@
     </view>
   </view>
 
+  <view class="card documents-card">
+    <view class="section-title">文书草稿</view>
+    <view wx:for="{{documentDrafts}}" wx:key="name" class="doc-row">
+      <text>{{item.name}}</text>
+      <text class="muted">{{item.status}}</text>
+    </view>
+  </view>
+
   <view class="action-stack">
     <button class="secondary-button" bindtap="goReport">查看赔偿测算</button>
-    <button class="secondary-button" bindtap="goCheckout">生成理赔材料包</button>
+    <button class="secondary-button" bindtap="goDocuments">查看文书草稿</button>
+    <button class="primary-button" bindtap="goCheckout">生成理赔材料包</button>
   </view>
 </view>
-

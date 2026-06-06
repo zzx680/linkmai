@@ -7,6 +7,10 @@
     <view class="hero-mark">LM</view>
   </view>
 
+  <view class="subcopy">
+    建档、补材料、测算和文书草稿都围绕一个案件推进。复杂情况会提示人工复核。
+  </view>
+
   <button class="primary-button start-button" bindtap="startCase">
     开始处理事故
   </button>
@@ -15,19 +19,34 @@
     <view class="card-top">
       <view>
         <view class="section-title">{{currentCase.title}}</view>
-        <text class="muted case-plate">{{currentCase.plate}}</text>
+        <text class="muted case-plate">{{currentCase.plate}} · {{currentCase.status}}</text>
       </view>
       <text class="pill risk-mid">风险 {{currentCase.riskLevel}}</text>
+    </view>
+
+    <view class="stage-rail">
+      <view wx:for="{{stages}}" wx:key="label" class="stage-item {{item.status}}">
+        <view class="stage-dot"></view>
+        <text>{{item.label}}</text>
+      </view>
     </view>
 
     <view class="next-box">
       <text class="muted">下一步</text>
       <view class="next-action">{{currentCase.nextAction}}</view>
-      <text class="muted">{{currentCase.nextActionTime}}</text>
+      <view class="next-meta">
+        <text class="muted">{{currentCase.nextActionTime}}</text>
+        <text class="pill">缺 {{currentCase.pendingCount}} 项材料</text>
+      </view>
     </view>
 
     <view class="progress-track">
       <view class="progress-fill" style="width: {{currentCase.progress}}%;"></view>
+    </view>
+
+    <view class="entitlements">
+      <text class="muted">已解锁</text>
+      <text wx:for="{{currentCase.unlocked}}" wx:key="*this" class="mini-tag">{{item}}</text>
     </view>
 
     <button class="secondary-button" bindtap="openCase">继续处理</button>
@@ -46,8 +65,7 @@
     </view>
   </view>
 
-  <view class="notice">
+  <view class="warning-panel notice">
     复杂事故、重伤、酒驾、逃逸等情况将建议人工复核。
   </view>
 </view>
-

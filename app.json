@@ -7,6 +7,7 @@
     "pages/intake/index",
     "pages/materials/index/index",
     "pages/claim/report/index",
+    "pages/documents/index/index",
     "pages/orders/checkout/index",
     "pages/profile/index",
     "pages/legal/privacy/index",

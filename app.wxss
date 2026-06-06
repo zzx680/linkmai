@@ -63,6 +63,11 @@ button::after {
   box-shadow: 0 18rpx 48rpx rgba(18, 61, 54, 0.07);
 }
 
+.surface-soft {
+  background: #edf3f1;
+  border: 1rpx solid #dce7e2;
+}
+
 .primary-button {
   min-height: 96rpx;
   padding: 0 34rpx;
@@ -76,6 +81,10 @@ button::after {
   font-weight: 760;
 }
 
+.primary-button:active {
+  background: #0e302a;
+}
+
 .secondary-button {
   min-height: 84rpx;
   padding: 0 28rpx;
@@ -87,6 +96,10 @@ button::after {
   align-items: center;
   justify-content: center;
   font-weight: 700;
+}
+
+.secondary-button:active {
+  background: #f4f8f6;
 }
 
 .pill {
@@ -121,3 +134,20 @@ button::after {
   background: #e1e7e4;
 }
 
+.warning-panel {
+  padding: 22rpx 24rpx;
+  border-left: 6rpx solid #b7791f;
+  border-radius: 10rpx;
+  background: #fff7e8;
+  color: #6b520f;
+  line-height: 1.5;
+}
+
+.danger-panel {
+  padding: 22rpx 24rpx;
+  border-left: 6rpx solid #c2413b;
+  border-radius: 10rpx;
+  background: #fff1f0;
+  color: #8d2b26;
+  line-height: 1.5;
+}

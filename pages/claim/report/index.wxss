@@ -2,6 +2,13 @@
   margin-bottom: 24rpx;
 }
 
+.report-title {
+  margin-top: 10rpx;
+  color: #18211f;
+  font-size: 36rpx;
+  font-weight: 820;
+}
+
 .amount {
   margin: 14rpx 0;
   color: #123d36;
@@ -9,18 +16,44 @@
   font-weight: 860;
 }
 
-.warning {
-  padding: 20rpx 22rpx;
-  border-left: 6rpx solid #b7791f;
-  border-radius: 10rpx;
-  background: #fff7e8;
-  color: #6b520f;
+.confidence-card {
+  margin-bottom: 22rpx;
+  padding: 26rpx;
+  display: flex;
+  justify-content: space-between;
+  gap: 24rpx;
+  align-items: center;
+}
+
+.confidence-label {
+  color: #6b7471;
+  font-size: 24rpx;
+}
+
+.confidence-value {
+  margin-top: 6rpx;
+  color: #123d36;
+  font-size: 42rpx;
+  font-weight: 860;
+}
+
+.confidence-copy {
+  flex: 1;
+  color: #6b7471;
   line-height: 1.45;
+  text-align: right;
 }
 
 .item-list {
   margin-bottom: 26rpx;
   padding: 8rpx 24rpx;
+}
+
+.list-title {
+  padding: 24rpx 0 6rpx;
+  color: #18211f;
+  font-size: 32rpx;
+  font-weight: 800;
 }
 
 .claim-row {
@@ -47,6 +80,13 @@
   line-height: 1.45;
 }
 
+.basis {
+  margin-top: 12rpx;
+  color: #5e7f78;
+  font-size: 22rpx;
+  line-height: 1.4;
+}
+
 .claim-side {
   min-width: 170rpx;
   text-align: right;
@@ -65,3 +105,26 @@
   font-size: 22rpx;
 }
 
+.missing-card {
+  margin-bottom: 24rpx;
+  padding: 26rpx;
+}
+
+.missing-row {
+  min-height: 64rpx;
+  display: flex;
+  align-items: center;
+  color: #6b7471;
+  border-bottom: 1rpx solid #edf1ef;
+  line-height: 1.4;
+}
+
+.missing-row:last-child {
+  border-bottom: 0;
+}
+
+.action-stack {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 16rpx;
+}

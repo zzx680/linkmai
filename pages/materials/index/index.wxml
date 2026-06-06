@@ -18,12 +18,17 @@
         <view class="muted purpose">{{material.purpose}}</view>
       </view>
       <view class="material-side">
-        <text class="pill {{material.status === '已通过' ? 'risk-low' : material.status === '需补充' ? 'risk-mid' : ''}}">
+        <text class="pill {{material.status === '已通过' ? 'risk-low' : material.status === '需补充' ? 'risk-mid' : material.status === '未上传' ? '' : 'risk-high'}}">
           {{material.status}}
         </text>
-        <button class="upload-button" data-name="{{material.name}}" bindtap="upload">上传</button>
+        <button class="upload-button" data-name="{{material.name}}" bindtap="upload">
+          {{material.status === '已通过' ? '查看' : material.status === '需补充' ? '补充' : '上传'}}
+        </button>
       </view>
     </view>
   </view>
-</view>
 
+  <view class="danger-panel">
+    上传病历、身份证、收入证明等敏感材料前，正式版本会再次征得单独授权。
+  </view>
+</view>

@@ -22,9 +22,29 @@
   background: #f2f7f5;
 }
 
+.badge-line {
+  margin-bottom: 10rpx;
+}
+
 .product-name {
   font-size: 32rpx;
   font-weight: 800;
+}
+
+.included {
+  display: flex;
+  gap: 10rpx;
+  flex-wrap: wrap;
+  margin-top: 18rpx;
+}
+
+.mini-tag {
+  padding: 8rpx 12rpx;
+  border-radius: 10rpx;
+  background: #edf3f1;
+  color: #123d36;
+  font-size: 22rpx;
+  font-weight: 700;
 }
 
 .product-desc {
@@ -46,9 +66,25 @@
   padding: 26rpx;
 }
 
+.limit-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.limit-label {
+  color: #123d36;
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
 .limit-line {
-  margin-top: 16rpx;
+  margin-top: 8rpx;
   color: #6b7471;
   line-height: 1.45;
 }
 
+.pay-warning {
+  margin-bottom: 24rpx;
+}

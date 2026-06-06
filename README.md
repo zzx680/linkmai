@@ -7,6 +7,7 @@ linkmai is a WeChat Mini Program for traffic accident self-service handling. It 
 This repository currently contains:
 
 - Product and launch planning in `docs/`
+- Product/UI design specification in `docs/product-ui-spec.md`
 - A WeChat Mini Program MVP prototype
 - Mock data for the main user journey
 
@@ -21,6 +22,7 @@ The current prototype is frontend-only. Real WeChat login, backend APIs, OCR, pa
 - `pages/cases/detail/index`: case dashboard
 - `pages/materials/index/index`: material center
 - `pages/claim/report/index`: compensation estimate
+- `pages/documents/index/index`: document drafts
 - `pages/orders/checkout/index`: service package and payment placeholder
 - `pages/profile/index`: profile, orders, legal/privacy entries
 - `pages/legal/privacy/index`: privacy policy summary
@@ -59,3 +61,17 @@ Avoid these terms:
 5. Implement case, material, claim report, order, and payment APIs.
 6. Add OCR and rule engine.
 7. Add admin console.
+
+## Backend
+
+Backend skeleton:
+
+```text
+backend/
+```
+
+Aliyun deployment notes:
+
+```text
+docs/aliyun-deployment.md
+```

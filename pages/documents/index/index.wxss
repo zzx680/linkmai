@@ -1,0 +1,43 @@
+.doc-head {
+  margin-bottom: 28rpx;
+}
+
+.copy {
+  margin-top: 14rpx;
+  line-height: 1.55;
+}
+
+.doc-card {
+  min-height: 150rpx;
+  margin-bottom: 18rpx;
+  padding: 26rpx;
+  display: flex;
+  justify-content: space-between;
+  gap: 22rpx;
+}
+
+.doc-name {
+  font-size: 32rpx;
+  font-weight: 800;
+}
+
+.doc-desc {
+  margin-top: 10rpx;
+  line-height: 1.45;
+  font-size: 24rpx;
+}
+
+.doc-side {
+  width: 150rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.upload-button {
+  color: #123d36;
+  font-weight: 760;
+  font-size: 24rpx;
+}
+
