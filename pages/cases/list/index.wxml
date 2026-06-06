@@ -2,7 +2,7 @@
   <view class="list-header">
     <view>
       <text class="eyebrow">案件</text>
-      <view class="title">我的处理进度</view>
+      <view class="title">跟踪处理结果</view>
     </view>
     <button class="secondary-button small-button" bindtap="createCase">新建</button>
   </view>
@@ -21,4 +21,3 @@
     </view>
   </view>
 </view>
-

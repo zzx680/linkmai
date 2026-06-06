@@ -1,8 +1,8 @@
 <view class="page">
   <view class="material-head">
     <text class="eyebrow">材料</text>
-    <view class="title">把证据整理清楚</view>
-    <view class="muted copy">每份材料都会标记用途和状态，补齐后再生成测算会更稳。</view>
+    <view class="title">按用途补齐材料</view>
+    <view class="muted copy">先补影响赔偿金额和文书生成的材料。每份材料都会说明为什么需要。</view>
   </view>
 
   <view wx:for="{{materials}}" wx:key="group" class="group">
@@ -18,7 +18,7 @@
         <view class="muted purpose">{{material.purpose}}</view>
       </view>
       <view class="material-side">
-        <text class="pill {{material.status === '已通过' ? 'risk-low' : material.status === '需补充' ? 'risk-mid' : material.status === '未上传' ? '' : 'risk-high'}}">
+        <text class="pill {{material.status === '已通过' ? 'risk-low' : material.status === '需补充' ? 'risk-mid' : ''}}">
           {{material.status}}
         </text>
         <button class="upload-button" data-name="{{material.name}}" bindtap="upload">
@@ -29,6 +29,6 @@
   </view>
 
   <view class="danger-panel">
-    上传病历、身份证、收入证明等敏感材料前，正式版本会再次征得单独授权。
+    上传病历、身份证、收入证明等敏感材料前，正式版本会再次征得单独授权。高风险案件建议先人工复核。
   </view>
 </view>

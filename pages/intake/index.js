@@ -38,6 +38,13 @@ Page({
   },
 
   next() {
+    if (!this.data.answers[this.data.step]) {
+      wx.showToast({
+        title: "请先选择一个答案",
+        icon: "none"
+      });
+      return;
+    }
     if (this.data.step < this.data.questions.length - 1) {
       this.setData({ step: this.data.step + 1 });
       return;

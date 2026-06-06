@@ -4,58 +4,70 @@ const caseSummary = {
   plate: "沪A****",
   status: "待补材料",
   riskLevel: "中",
-  nextAction: "上传医疗发票和病历",
+  nextAction: "上传医疗发票和病历后查看赔偿金额",
   nextActionTime: "预计 2 分钟",
-  progress: 62,
+  progress: 46,
   estimateRange: "¥18,600 - ¥24,300",
-  unlocked: ["基础问诊", "材料清单"],
-  pendingCount: 4
+  unlocked: ["案件已创建", "材料清单"],
+  pendingCount: 5,
+  documentReadyCount: 3,
+  highRiskReason: "存在医疗材料缺口和误工证明不确定项，建议生成前人工复核。"
 };
 
-const stages = [
-  { label: "建档", status: "done" },
-  { label: "补材料", status: "active" },
-  { label: "测算", status: "ready" },
-  { label: "协商", status: "idle" },
-  { label: "文书", status: "idle" }
+const productSteps = [
+  { label: "开始处理事故", shortLabel: "建案", status: "done" },
+  { label: "上传材料", shortLabel: "材料", status: "active" },
+  { label: "查看赔偿金额", shortLabel: "赔偿", status: "ready" },
+  { label: "生成处理材料", shortLabel: "文书", status: "idle" },
+  { label: "跟踪结果", shortLabel: "跟踪", status: "idle" }
+];
+
+const mainActions = [
+  { label: "开始处理事故", desc: "创建案件并确认事故信息", path: "/pages/login/index", type: "primary" },
+  { label: "上传材料", desc: "补齐病历、发票、责任材料", path: "/pages/materials/index/index" },
+  { label: "查看赔偿", desc: "查看当前材料下的赔偿区间", path: "/pages/claim/report/index" },
+  { label: "生成文书", desc: "生成理赔、调解、诉讼草稿", path: "/pages/documents/index/index" }
 ];
 
 const tasks = [
-  { title: "事故信息", status: "已完成" },
-  { title: "责任信息", status: "已完成" },
-  { title: "医疗材料", status: "待补充" },
-  { title: "赔偿测算", status: "可生成" },
-  { title: "文书材料", status: "未生成" }
+  { title: "开始处理事故", status: "已完成" },
+  { title: "上传材料", status: "需补充" },
+  { title: "查看赔偿金额", status: "可查看" },
+  { title: "生成处理材料", status: "部分可生成" },
+  { title: "跟踪结果", status: "未开始" }
 ];
 
 const materials = [
   {
-    group: "事故责任",
+    group: "确认责任",
     items: [
-      { name: "事故认定书", purpose: "用于确认责任比例", status: "已通过" },
-      { name: "交警调解记录", purpose: "用于补充处理经过", status: "未上传" }
+      { name: "事故认定书", purpose: "确认双方责任比例，影响赔偿比例和沟通对象。", status: "已通过" },
+      { name: "交警调解记录", purpose: "补充事故经过，后续申请调解时可作为依据。", status: "未上传" }
     ]
   },
   {
-    group: "医疗材料",
+    group: "计算人伤赔偿",
     items: [
-      { name: "病历", purpose: "用于判断伤情和赔偿项目", status: "需补充" },
-      { name: "医疗发票", purpose: "用于计算医疗费", status: "未上传" },
-      { name: "费用清单", purpose: "用于核对医疗费用明细", status: "未上传" }
+      { name: "病历", purpose: "判断伤情、治疗经过和是否涉及误工、护理、营养费。", status: "需补充" },
+      { name: "医疗发票", purpose: "核算医疗费，缺失会让赔偿区间偏保守。", status: "未上传" },
+      { name: "费用清单", purpose: "核对医疗费用明细，减少保险审核争议。", status: "未上传" },
+      { name: "诊断证明", purpose: "辅助确认休息、护理或营养建议。", status: "未上传" }
     ]
   },
   {
-    group: "收入与误工",
+    group: "证明误工收入",
     items: [
-      { name: "收入证明", purpose: "用于计算误工费", status: "未上传" },
-      { name: "误工证明", purpose: "用于确认误工天数", status: "未上传" }
+      { name: "收入证明", purpose: "用于计算误工费，缺失时只能按临时区间估算。", status: "未上传" },
+      { name: "误工证明", purpose: "确认误工天数，影响误工费金额。", status: "未上传" },
+      { name: "工资流水", purpose: "证明收入连续性，提高误工费测算可信度。", status: "需补充" }
     ]
   },
   {
-    group: "车辆损失",
+    group: "确认车辆损失",
     items: [
-      { name: "定损单", purpose: "用于计算车辆维修损失", status: "已通过" },
-      { name: "维修发票", purpose: "用于确认实际支出", status: "未上传" }
+      { name: "定损单", purpose: "确认车辆维修损失的基础金额。", status: "已通过" },
+      { name: "维修发票", purpose: "证明实际维修支出，影响车辆损失确认。", status: "未上传" },
+      { name: "车辆受损照片", purpose: "说明受损位置和事故关联性。", status: "已通过" }
     ]
   }
 ];
@@ -63,34 +75,53 @@ const materials = [
 const claimItems = [
   {
     name: "医疗费",
-    amount: "¥8,200",
+    amount: "¥8,200 - ¥10,600",
     evidence: "已有部分发票",
-    detail: "按已上传票据金额汇总，缺少费用清单时结果可能偏低。"
+    detail: "按已上传票据金额汇总，缺少费用清单时结果可能偏低。",
+    missingImpact: "缺医疗发票和费用清单，医疗费上限暂按保守区间。"
   },
   {
     name: "误工费",
-    amount: "¥6,000",
+    amount: "¥4,800 - ¥6,800",
     evidence: "缺收入证明",
-    detail: "按误工天数和收入材料测算，当前使用临时区间。"
+    detail: "按误工天数和收入材料测算，当前使用临时区间。",
+    missingImpact: "缺收入证明和工资流水，误工费可能被保险方压低。"
   },
   {
     name: "护理费",
-    amount: "¥2,400",
+    amount: "¥1,800 - ¥2,800",
     evidence: "需确认护理天数",
-    detail: "根据就医材料和护理天数估算。"
+    detail: "根据就医材料和护理天数估算。",
+    missingImpact: "缺诊断证明或护理建议，护理天数需要人工确认。"
   },
   {
     name: "交通费",
-    amount: "¥300",
+    amount: "¥200 - ¥500",
     evidence: "建议补充票据",
-    detail: "按就医往返交通支出估算。"
+    detail: "按就医往返交通支出估算。",
+    missingImpact: "缺交通票据时通常只能按合理范围估算。"
+  },
+  {
+    name: "营养费",
+    amount: "¥600 - ¥1,200",
+    evidence: "缺医嘱",
+    detail: "结合伤情、治疗记录和医嘱建议估算。",
+    missingImpact: "缺营养建议时，金额区间不宜给得过高。"
   },
   {
     name: "车辆损失",
-    amount: "¥7,800",
+    amount: "¥7,000 - ¥8,200",
     evidence: "已有定损单",
-    detail: "按定损单和维修材料估算。"
+    detail: "按定损单和维修材料估算。",
+    missingImpact: "缺维修发票时，最终确认金额可能低于定损金额。"
   }
+];
+
+const missingImpacts = [
+  { material: "医疗发票", impact: "医疗费只能按已上传票据和保守区间估算。" },
+  { material: "收入证明", impact: "误工费无法确认稳定收入，区间会变宽。" },
+  { material: "诊断证明", impact: "护理费、营养费是否支持需要进一步确认。" },
+  { material: "维修发票", impact: "车辆损失可能只能按定损单暂估。" }
 ];
 
 const products = [
@@ -109,7 +140,7 @@ const products = [
     badge: "推荐",
     desc: "测算报告、理赔沟通稿、证据目录、理赔函草稿",
     includes: ["测算报告", "理赔沟通稿", "证据目录", "理赔函草稿"],
-    excludes: ["保证赔偿金额", "律师代理", "法院提交"]
+    excludes: ["赔偿结果承诺", "律师代理", "法院提交"]
   },
   {
     sku: "manual_review",
@@ -122,17 +153,59 @@ const products = [
 ];
 
 const documentDrafts = [
-  { name: "理赔函草稿", status: "可生成" },
-  { name: "协商沟通稿", status: "可生成" },
-  { name: "证据目录", status: "需补材料" }
+  {
+    name: "理赔函",
+    use: "发送给保险公司或责任方，说明事故、损失和赔偿请求。",
+    materialStatus: "材料基本齐",
+    status: "可生成",
+    action: "生成草稿"
+  },
+  {
+    name: "协商话术",
+    use: "用于电话或微信沟通，帮助你表达诉求和回应常见压价。",
+    materialStatus: "材料基本齐",
+    status: "可生成",
+    action: "生成草稿"
+  },
+  {
+    name: "调解申请书",
+    use: "用于向交警、人民调解组织或相关机构申请调解。",
+    materialStatus: "缺交警调解记录",
+    status: "需补充",
+    action: "去补材料"
+  },
+  {
+    name: "赔偿明细表",
+    use: "把医疗费、误工费、护理费、交通费等项目整理成清单。",
+    materialStatus: "缺医疗发票",
+    status: "需补充",
+    action: "去补材料"
+  },
+  {
+    name: "证据目录",
+    use: "整理事故责任、医疗、收入、车辆损失等证据材料。",
+    materialStatus: "材料基本齐",
+    status: "可生成",
+    action: "生成草稿"
+  },
+  {
+    name: "起诉状草稿",
+    use: "争议无法协商时，用于准备诉讼方向的基础草稿。",
+    materialStatus: "建议人工复核",
+    status: "需复核",
+    action: "人工复核"
+  }
 ];
 
 module.exports = {
   caseSummary,
-  stages,
+  stages: productSteps,
+  productSteps,
+  mainActions,
   tasks,
   materials,
   claimItems,
+  missingImpacts,
   products,
   documentDrafts
 };

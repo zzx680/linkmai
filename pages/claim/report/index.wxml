@@ -1,10 +1,10 @@
 <view class="page">
   <view class="report-hero">
     <text class="eyebrow">赔偿测算</text>
-    <view class="report-title">当前材料下的参考区间</view>
+    <view class="report-title">当前材料下的赔偿参考区间</view>
     <view class="amount">{{currentCase.estimateRange}}</view>
     <view class="warning-panel">
-      该金额为辅助测算，最终以协商、保险审核、调解或裁判结果为准。
+      金额为辅助测算参考，不保证最终赔偿结果。最终以协商、保险审核、调解或裁判结果为准。
     </view>
   </view>
 
@@ -24,7 +24,7 @@
       <view>
         <view class="claim-name">{{item.name}}</view>
         <view class="muted claim-detail">{{item.detail}}</view>
-        <view class="basis">依据：当前案件信息 + 已上传材料 + 赔偿规则 v1</view>
+        <view class="basis">{{item.missingImpact}}</view>
       </view>
       <view class="claim-side">
         <text class="claim-amount">{{item.amount}}</text>
@@ -35,13 +35,14 @@
 
   <view class="card missing-card">
     <view class="section-title">影响测算的缺失项</view>
-    <view class="missing-row">医疗发票：影响医疗费最终金额</view>
-    <view class="missing-row">收入证明：影响误工费区间</view>
-    <view class="missing-row">护理天数：影响护理费测算</view>
+    <view wx:for="{{missingImpacts}}" wx:key="material" class="missing-row">
+      <text class="missing-name">{{item.material}}</text>
+      <text class="missing-impact">{{item.impact}}</text>
+    </view>
   </view>
 
   <view class="action-stack">
-    <button class="secondary-button">补充材料后重算</button>
-    <button class="primary-button" bindtap="checkout">生成理赔材料包</button>
+    <button class="secondary-button" bindtap="goMaterials">补充材料后重算</button>
+    <button class="primary-button" bindtap="checkout">生成处理材料</button>
   </view>
 </view>

@@ -2,32 +2,44 @@
   <view class="hero">
     <view>
       <text class="eyebrow">linkmai</text>
-      <view class="title">交通事故自助处理助手</view>
+      <view class="title">交通事故处理台</view>
     </view>
     <view class="hero-mark">LM</view>
   </view>
 
   <view class="subcopy">
-    建档、补材料、测算和文书草稿都围绕一个案件推进。复杂情况会提示人工复核。
+    按一个案件推进：创建案件、上传材料、查看赔偿、生成处理材料。
   </view>
 
-  <button class="primary-button start-button" bindtap="startCase">
-    开始处理事故
-  </button>
+  <view class="action-grid">
+    <button
+      wx:for="{{mainActions}}"
+      wx:key="label"
+      class="action-card {{item.type === 'primary' ? 'action-primary' : ''}}"
+      data-path="{{item.path}}"
+      bindtap="openAction"
+    >
+      <view class="action-index">0{{index + 1}}</view>
+      <view>
+        <view class="action-title">{{item.label}}</view>
+        <view class="action-desc">{{item.desc}}</view>
+      </view>
+    </button>
+  </view>
 
   <view class="card current-card">
     <view class="card-top">
       <view>
-        <view class="section-title">{{currentCase.title}}</view>
+        <view class="section-title">当前案件</view>
         <text class="muted case-plate">{{currentCase.plate}} · {{currentCase.status}}</text>
       </view>
       <text class="pill risk-mid">风险 {{currentCase.riskLevel}}</text>
     </view>
 
     <view class="stage-rail">
-      <view wx:for="{{stages}}" wx:key="label" class="stage-item {{item.status}}">
+      <view wx:for="{{productSteps}}" wx:key="label" class="stage-item {{item.status}}">
         <view class="stage-dot"></view>
-        <text>{{item.label}}</text>
+        <text>{{item.shortLabel}}</text>
       </view>
     </view>
 
@@ -44,28 +56,10 @@
       <view class="progress-fill" style="width: {{currentCase.progress}}%;"></view>
     </view>
 
-    <view class="entitlements">
-      <text class="muted">已解锁</text>
-      <text wx:for="{{currentCase.unlocked}}" wx:key="*this" class="mini-tag">{{item}}</text>
-    </view>
-
     <button class="secondary-button" bindtap="openCase">继续处理</button>
   </view>
 
-  <view class="quick-grid">
-    <view
-      wx:for="{{quickActions}}"
-      wx:key="label"
-      class="quick-item card"
-      data-path="{{item.path}}"
-      bindtap="openQuick"
-    >
-      <view class="quick-icon">{{index + 1}}</view>
-      <text>{{item.label}}</text>
-    </view>
-  </view>
-
   <view class="warning-panel notice">
-    复杂事故、重伤、酒驾、逃逸等情况将建议人工复核。
+    文书和测算均为辅助结果。复杂事故、重伤、酒驾、逃逸等情况将建议人工复核。
   </view>
 </view>

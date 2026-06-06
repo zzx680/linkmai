@@ -1,8 +1,8 @@
 <view class="page">
   <view class="checkout-head">
     <text class="eyebrow">计费</text>
-    <view class="title">选择你需要的处理包</view>
-    <view class="muted copy">支付前会明确包含内容、交付方式和退款规则。</view>
+    <view class="title">解锁处理材料</view>
+    <view class="muted copy">支付前会明确包含内容、交付方式、退款规则和服务边界。</view>
   </view>
 
   <view
@@ -34,7 +34,7 @@
       </view>
       <view>
         <view class="limit-label">不包含</view>
-        <view class="limit-line">律师代理、结果承诺、代提交材料</view>
+        <view class="limit-line">律师代理、赔偿结果承诺、代提交材料</view>
       </view>
       <view>
         <view class="limit-label">退款</view>
@@ -44,7 +44,7 @@
   </view>
 
   <view class="warning-panel pay-warning">
-    文书为辅助生成草稿；测算金额不保证最终赔偿结果；复杂案件可能需要人工复核。
+    文书为辅助生成草稿；测算金额不保证最终赔偿结果；复杂案件建议人工复核。
   </view>
 
   <button class="primary-button" bindtap="pay">微信支付</button>

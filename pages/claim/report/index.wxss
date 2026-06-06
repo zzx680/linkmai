@@ -111,16 +111,27 @@
 }
 
 .missing-row {
-  min-height: 64rpx;
-  display: flex;
-  align-items: center;
-  color: #6b7471;
+  min-height: 86rpx;
+  padding: 16rpx 0;
+  display: grid;
+  grid-template-columns: 150rpx 1fr;
+  gap: 16rpx;
+  align-items: flex-start;
   border-bottom: 1rpx solid #edf1ef;
   line-height: 1.4;
 }
 
 .missing-row:last-child {
   border-bottom: 0;
+}
+
+.missing-name {
+  color: #123d36;
+  font-weight: 800;
+}
+
+.missing-impact {
+  color: #6b7471;
 }
 
 .action-stack {

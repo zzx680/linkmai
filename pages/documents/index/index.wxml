@@ -1,8 +1,16 @@
 <view class="page">
   <view class="doc-head">
-    <text class="eyebrow">文书草稿</text>
-    <view class="title">把协商材料准备好</view>
-    <view class="muted copy">所有文书均为辅助草稿，正式使用前需要你核对，复杂案件建议人工复核。</view>
+    <text class="eyebrow">生成处理材料</text>
+    <view class="title">理赔、调解、诉讼材料草稿</view>
+    <view class="muted copy">这里是核心交付页。所有内容均为辅助生成草稿，正式使用前需要你核对。</view>
+  </view>
+
+  <view class="card delivery-card">
+    <view>
+      <view class="delivery-label">当前可生成</view>
+      <view class="delivery-value">{{documentDrafts.length}} 类材料 · {{documentDrafts[0].status}}</view>
+    </view>
+    <button class="secondary-button review-button" bindtap="generate" data-name="起诉状草稿">人工复核</button>
   </view>
 
   <view
@@ -12,20 +20,18 @@
   >
     <view>
       <view class="doc-name">{{item.name}}</view>
-      <view class="muted doc-desc">
-        {{item.name === '证据目录' ? '整理已上传材料，形成证据清单。' : '根据案件信息生成可复制的沟通文本。'}}
-      </view>
+      <view class="muted doc-desc">{{item.use}}</view>
+      <view class="material-state">所需材料：{{item.materialStatus}}</view>
     </view>
     <view class="doc-side">
-      <text class="pill {{item.status === '可生成' ? 'risk-low' : 'risk-mid'}}">{{item.status}}</text>
+      <text class="pill {{item.status === '可生成' ? 'risk-low' : item.status === '需复核' ? 'risk-high' : 'risk-mid'}}">{{item.status}}</text>
       <button class="upload-button" data-name="{{item.name}}" bindtap="generate">
-        {{item.status === '可生成' ? '生成' : '去补材料'}}
+        {{item.action}}
       </button>
     </view>
   </view>
 
   <view class="warning-panel">
-    草稿内容不构成正式律师意见，不保证协商、调解或裁判结果。
+    文书为辅助生成草稿，不构成正式律师意见，不保证协商、调解、诉讼或赔偿结果。
   </view>
 </view>
-

@@ -7,6 +7,32 @@
   line-height: 1.55;
 }
 
+.delivery-card {
+  margin-bottom: 22rpx;
+  padding: 26rpx;
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+  align-items: center;
+}
+
+.delivery-label {
+  color: #6b7471;
+  font-size: 24rpx;
+}
+
+.delivery-value {
+  margin-top: 8rpx;
+  color: #123d36;
+  font-size: 32rpx;
+  font-weight: 820;
+}
+
+.review-button {
+  min-width: 176rpx;
+  min-height: 72rpx;
+}
+
 .doc-card {
   min-height: 150rpx;
   margin-bottom: 18rpx;
@@ -27,6 +53,14 @@
   font-size: 24rpx;
 }
 
+.material-state {
+  margin-top: 14rpx;
+  color: #5e7f78;
+  font-size: 23rpx;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
 .doc-side {
   width: 150rpx;
   display: flex;
@@ -40,4 +74,3 @@
   font-weight: 760;
   font-size: 24rpx;
 }
-

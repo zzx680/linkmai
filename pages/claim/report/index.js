@@ -1,13 +1,17 @@
-const { caseSummary, claimItems } = require("../../../utils/mock");
+const { caseSummary, claimItems, missingImpacts } = require("../../../utils/mock");
 
 Page({
   data: {
     currentCase: caseSummary,
-    claimItems
+    claimItems,
+    missingImpacts
+  },
+
+  goMaterials() {
+    wx.switchTab({ url: "/pages/materials/index/index" });
   },
 
   checkout() {
-    wx.navigateTo({ url: "/pages/orders/checkout/index" });
+    wx.navigateTo({ url: "/pages/documents/index/index" });
   }
 });
-

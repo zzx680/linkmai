@@ -4,9 +4,8 @@
     <view class="section-title">服务性质</view>
     <view class="paragraph">linkmai 提供交通事故处理辅助、材料整理、赔偿测算参考和文书草稿生成服务。</view>
     <view class="section-title">重要边界</view>
-    <view class="paragraph">本服务不构成律师代理，不保证赔偿金额或处理结果。复杂案件建议人工复核或咨询专业人员。</view>
+    <view class="paragraph">本服务不构成律师代理，不承诺赔偿金额或处理结果。复杂案件建议人工复核或咨询专业人员。</view>
     <view class="section-title">付费服务</view>
     <view class="paragraph">支付前会展示服务包内容、交付方式、预计时间和退款规则。</view>
   </view>
 </view>
-
