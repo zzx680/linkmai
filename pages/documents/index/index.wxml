@@ -5,6 +5,14 @@
     <view class="muted copy">这里是核心交付页。所有内容均为辅助生成草稿，正式使用前需要你核对。</view>
   </view>
 
+  <view wx:if="{{loading}}" class="card state-card">正在加载文书清单...</view>
+  <view wx:elif="{{error}}" class="danger-panel state-card">{{error}}</view>
+  <view wx:elif="{{!documentDrafts.length}}" class="card empty-card">
+    <view class="section-title">暂无可生成文书</view>
+    <view class="muted empty-copy">请先创建案件并补充基础材料。</view>
+  </view>
+
+  <block wx:else>
   <view class="card delivery-card">
     <view>
       <view class="delivery-label">当前可生成</view>
@@ -25,8 +33,8 @@
     </view>
     <view class="doc-side">
       <text class="pill {{item.status === '可生成' ? 'risk-low' : item.status === '需复核' ? 'risk-high' : 'risk-mid'}}">{{item.status}}</text>
-      <button class="upload-button" data-name="{{item.name}}" bindtap="generate">
-        {{item.action}}
+      <button class="upload-button" disabled="{{generatingName === item.name}}" data-name="{{item.name}}" bindtap="generate">
+        {{generatingName === item.name ? '处理中' : item.action}}
       </button>
     </view>
   </view>
@@ -34,4 +42,5 @@
   <view class="warning-panel">
     文书为辅助生成草稿，不构成正式律师意见，不保证协商、调解、诉讼或赔偿结果。
   </view>
+  </block>
 </view>

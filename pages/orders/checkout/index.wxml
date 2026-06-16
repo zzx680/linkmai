@@ -5,7 +5,11 @@
     <view class="muted copy">支付前会明确包含内容、交付方式、退款规则和服务边界。</view>
   </view>
 
+  <view wx:if="{{loading}}" class="card state-card">正在加载服务包...</view>
+  <view wx:elif="{{error}}" class="danger-panel state-card">{{error}}</view>
+
   <view
+    wx:else
     wx:for="{{products}}"
     wx:key="sku"
     class="card product-card {{selectedSku === item.sku ? 'selected' : ''}}"
@@ -25,7 +29,7 @@
     <text class="product-price">{{item.price}}</text>
   </view>
 
-  <view class="card limit-card">
+  <view wx:if="{{!loading && !error}}" class="card limit-card">
     <view class="section-title">服务说明</view>
     <view class="limit-grid">
       <view>
@@ -43,9 +47,11 @@
     </view>
   </view>
 
-  <view class="warning-panel pay-warning">
+  <view wx:if="{{!loading && !error}}" class="warning-panel pay-warning">
     文书为辅助生成草稿；测算金额不保证最终赔偿结果；复杂案件建议人工复核。
   </view>
 
-  <button class="primary-button" bindtap="pay">微信支付</button>
+  <button wx:if="{{!loading && !error}}" class="primary-button" disabled="{{paying || !selectedSku}}" bindtap="pay">
+    {{paying ? '处理中' : '微信支付'}}
+  </button>
 </view>

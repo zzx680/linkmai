@@ -1,8 +1,26 @@
-const { documentDrafts } = require("../../../utils/mock");
+const api = require("../../../utils/api");
 
 Page({
   data: {
-    documentDrafts
+    documentDrafts: [],
+    loading: true,
+    error: "",
+    generatingName: ""
+  },
+
+  onLoad() {
+    this.loadDocuments();
+  },
+
+  loadDocuments() {
+    this.setData({ loading: true, error: "" });
+    api.getDocumentDrafts()
+      .then((documentDrafts) => {
+        this.setData({ documentDrafts, loading: false });
+      })
+      .catch(() => {
+        this.setData({ loading: false, error: "文书清单加载失败，请稍后重试" });
+      });
   },
 
   generate(event) {
@@ -16,9 +34,15 @@ Page({
       wx.navigateTo({ url: "/pages/orders/checkout/index" });
       return;
     }
-    wx.showToast({
-      title: `${name}辅助草稿生成入口`,
-      icon: "none"
+    this.setData({ generatingName: name });
+    wx.showModal({
+      title: "文书生成待接入",
+      content: `${name} 将在正式版本通过后端生成辅助草稿，生成前会再次提示你核对材料。`,
+      confirmText: "知道了",
+      showCancel: false,
+      complete: () => {
+        this.setData({ generatingName: "" });
+      }
     });
   }
 });

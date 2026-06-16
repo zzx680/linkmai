@@ -1,8 +1,25 @@
-const { caseSummary } = require("../../../utils/mock");
+const api = require("../../../utils/api");
 
 Page({
   data: {
-    cases: [caseSummary]
+    cases: [],
+    loading: true,
+    error: ""
+  },
+
+  onLoad() {
+    this.loadCases();
+  },
+
+  loadCases() {
+    this.setData({ loading: true, error: "" });
+    api.getCaseList()
+      .then((cases) => {
+        this.setData({ cases, loading: false });
+      })
+      .catch(() => {
+        this.setData({ loading: false, error: "案件列表加载失败，请稍后重试" });
+      });
   },
 
   openCase() {

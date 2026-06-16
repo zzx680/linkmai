@@ -19,6 +19,27 @@
   gap: 8rpx;
 }
 
+.summary-card {
+  margin-bottom: 22rpx;
+  padding: 24rpx;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18rpx;
+}
+
+.summary-label {
+  color: #a0a0b0;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.summary-value {
+  margin-top: 8rpx;
+  color: #111111;
+  font-size: 32rpx;
+  font-weight: 760;
+}
+
 .stage-item {
   color: #a0a0b0;
   display: flex;

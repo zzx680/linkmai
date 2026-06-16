@@ -75,3 +75,7 @@
   font-weight: 700;
   font-size: 24rpx;
 }
+
+.upload-button[disabled] {
+  color: #a0a0b0;
+}

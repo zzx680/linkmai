@@ -1,4 +1,8 @@
 <view class="page">
+  <view wx:if="{{loading}}" class="card state-card">正在加载赔偿测算...</view>
+  <view wx:elif="{{error}}" class="danger-panel state-card">{{error}}</view>
+
+  <block wx:else>
   <view class="report-hero">
     <text class="eyebrow">赔偿测算</text>
     <view class="report-title">当前材料下的赔偿参考区间</view>
@@ -45,4 +49,5 @@
     <button class="secondary-button" bindtap="goMaterials">补充材料后重算</button>
     <button class="primary-button" bindtap="checkout">生成处理材料</button>
   </view>
+  </block>
 </view>

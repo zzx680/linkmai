@@ -1,6 +1,7 @@
 Page({
   data: {
-    agreed: false
+    agreed: false,
+    loggingIn: false
   },
 
   toggleAgree() {
@@ -8,6 +9,7 @@ Page({
   },
 
   login() {
+    if (this.data.loggingIn) return;
     if (!this.data.agreed) {
       wx.showToast({
         title: "请先同意协议和隐私政策",
@@ -16,6 +18,7 @@ Page({
       return;
     }
 
+    this.setData({ loggingIn: true });
     wx.showModal({
       title: "登录联调待接入",
       content: "正式上线时将通过 wx.login 获取 code，并由后端换取 openid/session。",
@@ -23,6 +26,9 @@ Page({
       showCancel: false,
       success: () => {
         wx.navigateTo({ url: "/pages/intake/index" });
+      },
+      complete: () => {
+        this.setData({ loggingIn: false });
       }
     });
   },
@@ -35,4 +41,3 @@ Page({
     wx.navigateTo({ url: "/pages/legal/privacy/index" });
   }
 });
-

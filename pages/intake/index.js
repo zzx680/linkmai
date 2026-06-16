@@ -27,7 +27,8 @@ Page({
     step: 0,
     questions,
     answers: [],
-    riskOptions: ["伤情较重", "无保险", "对方拒绝提供"]
+    riskOptions: ["伤情较重", "无保险", "对方拒绝提供"],
+    saving: false
   },
 
   choose(event) {
@@ -59,9 +60,14 @@ Page({
   },
 
   saveDraft() {
+    if (this.data.saving) return;
+    this.setData({ saving: true });
     wx.showToast({
       title: "已保存问诊草稿",
-      icon: "none"
+      icon: "none",
+      complete: () => {
+        this.setData({ saving: false });
+      }
     });
   }
 });

@@ -85,6 +85,11 @@ button::after {
   background: #333333;
 }
 
+.primary-button[disabled],
+.secondary-button[disabled] {
+  opacity: 0.48;
+}
+
 .secondary-button {
   min-height: 76rpx;
   padding: 0 26rpx;
@@ -151,5 +156,18 @@ button::after {
   border-radius: 12rpx;
   background: rgba(220, 38, 38, 0.08);
   color: #991b1b;
+  line-height: 1.5;
+}
+
+.state-card,
+.empty-card {
+  padding: 28rpx;
+  margin-bottom: 22rpx;
+  color: #888899;
+  line-height: 1.5;
+}
+
+.empty-copy {
+  margin: 12rpx 0 22rpx;
   line-height: 1.5;
 }

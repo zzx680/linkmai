@@ -3,10 +3,12 @@ const caseSummary = {
   title: "追尾事故 · 上海浦东",
   plate: "沪A****",
   status: "待补材料",
+  currentStage: "上传材料",
   riskLevel: "中",
   nextAction: "上传医疗发票和病历后查看赔偿金额",
   nextActionTime: "预计 2 分钟",
   progress: 46,
+  materialCompleteness: 46,
   estimateRange: "¥18,600 - ¥24,300",
   unlocked: ["案件已创建", "材料清单"],
   pendingCount: 5,
@@ -39,14 +41,14 @@ const tasks = [
 
 const materials = [
   {
-    group: "确认责任",
+    group: "事故责任",
     items: [
       { name: "事故认定书", purpose: "确认双方责任比例，影响赔偿比例和沟通对象。", status: "已通过" },
       { name: "交警调解记录", purpose: "补充事故经过，后续申请调解时可作为依据。", status: "未上传" }
     ]
   },
   {
-    group: "计算人伤赔偿",
+    group: "医疗材料",
     items: [
       { name: "病历", purpose: "判断伤情、治疗经过和是否涉及误工、护理、营养费。", status: "需补充" },
       { name: "医疗发票", purpose: "核算医疗费，缺失会让赔偿区间偏保守。", status: "未上传" },
@@ -55,7 +57,7 @@ const materials = [
     ]
   },
   {
-    group: "证明误工收入",
+    group: "收入与误工",
     items: [
       { name: "收入证明", purpose: "用于计算误工费，缺失时只能按临时区间估算。", status: "未上传" },
       { name: "误工证明", purpose: "确认误工天数，影响误工费金额。", status: "未上传" },
@@ -63,11 +65,20 @@ const materials = [
     ]
   },
   {
-    group: "确认车辆损失",
+    group: "车辆损失",
     items: [
       { name: "定损单", purpose: "确认车辆维修损失的基础金额。", status: "已通过" },
       { name: "维修发票", purpose: "证明实际维修支出，影响车辆损失确认。", status: "未上传" },
-      { name: "车辆受损照片", purpose: "说明受损位置和事故关联性。", status: "已通过" }
+      { name: "车辆受损照片", purpose: "说明受损位置和事故关联性。", status: "无法识别" }
+    ]
+  },
+  {
+    group: "身份与保险",
+    items: [
+      { name: "身份证", purpose: "用于确认当事人身份，生成文书草稿时需要核对。", status: "未上传" },
+      { name: "驾驶证", purpose: "用于确认驾驶资格和事故主体信息。", status: "已通过" },
+      { name: "行驶证", purpose: "用于确认车辆登记信息和车辆主体。", status: "未上传" },
+      { name: "保险单", purpose: "用于确认保险公司、保额和理赔路径。", status: "需补充" }
     ]
   }
 ];
@@ -197,6 +208,15 @@ const documentDrafts = [
   }
 ];
 
+const profileRows = [
+  { label: "我的订单", value: "1 个服务包" },
+  { label: "人工复核记录", value: "暂无" },
+  { label: "联系客服", value: "服务时间 9:00-18:00" },
+  { label: "用户协议", path: "/pages/legal/terms/index" },
+  { label: "隐私政策", path: "/pages/legal/privacy/index" },
+  { label: "数据删除", value: "可删除案件材料" }
+];
+
 module.exports = {
   caseSummary,
   stages: productSteps,
@@ -207,5 +227,6 @@ module.exports = {
   claimItems,
   missingImpacts,
   products,
-  documentDrafts
+  documentDrafts,
+  profileRows
 };

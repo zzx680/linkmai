@@ -68,6 +68,10 @@
   font-size: 24rpx;
 }
 
+.upload-button[disabled] {
+  color: #a0a0b0;
+}
+
 .danger-panel {
   margin-top: 10rpx;
 }

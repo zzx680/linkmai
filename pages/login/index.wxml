@@ -23,6 +23,7 @@
     </view>
   </view>
 
-  <button class="primary-button" bindtap="login">微信登录并继续</button>
+  <button class="primary-button" disabled="{{!agreed || loggingIn}}" bindtap="login">
+    {{loggingIn ? '处理中' : '微信登录并继续'}}
+  </button>
 </view>
-

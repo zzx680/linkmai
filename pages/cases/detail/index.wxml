@@ -1,10 +1,25 @@
 <view class="page">
+  <view wx:if="{{loading}}" class="card state-card">正在加载案件看板...</view>
+  <view wx:elif="{{error}}" class="danger-panel state-card">{{error}}</view>
+
+  <block wx:else>
   <view class="case-hero">
     <text class="eyebrow">案件看板</text>
     <view class="title">{{currentCase.title}}</view>
     <view class="meta-line">
       <text>{{currentCase.plate}}</text>
       <text class="pill risk-mid">风险 {{currentCase.riskLevel}}</text>
+    </view>
+  </view>
+
+  <view class="card summary-card">
+    <view>
+      <view class="summary-label">当前阶段</view>
+      <view class="summary-value">{{currentCase.currentStage}}</view>
+    </view>
+    <view>
+      <view class="summary-label">材料完成度</view>
+      <view class="summary-value">{{currentCase.materialCompleteness}}%</view>
     </view>
   </view>
 
@@ -36,7 +51,7 @@
   </view>
 
   <view class="card documents-card">
-    <view class="section-title">文书草稿</view>
+    <view class="section-title">文书生成状态</view>
     <view wx:for="{{documentDrafts}}" wx:key="name" class="doc-row">
       <text>{{item.name}}</text>
       <text class="muted">{{item.status}}</text>
@@ -48,4 +63,5 @@
     <button class="secondary-button" bindtap="goDocuments">查看文书草稿</button>
     <button class="primary-button" bindtap="goDocuments">生成处理材料</button>
   </view>
+  </block>
 </view>
