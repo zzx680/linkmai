@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     app_name: str = "linkmai-api"
     app_env: str = "local"
     api_prefix: str = "/api/v1"
-    database_url: str = "postgresql+psycopg://linkmai:linkmai@127.0.0.1:5432/linkmai"
+    database_url: str = "sqlite:///./linkmai.db"
     jwt_secret: str = "change-me"
     wechat_app_id: str = ""
     wechat_app_secret: str = ""
@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     aliyun_access_key_id: str = ""
     aliyun_access_key_secret: str = ""
     cors_origins: list[str] = ["*"]
+    access_token_expire_minutes: int = 60 * 24 * 7
+    db_auto_create: bool = True
 
 
 @lru_cache
@@ -26,4 +28,3 @@ def get_settings() -> Settings:
 
 
 settings = get_settings()
-

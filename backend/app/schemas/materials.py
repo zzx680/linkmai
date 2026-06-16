@@ -15,6 +15,7 @@ class UploadTokenRequest(BaseModel):
 class UploadTokenOut(BaseModel):
     upload_url: str
     object_key: str
+    file_id: UUID
     expires_in: int = 900
 
 
@@ -35,4 +36,3 @@ class MaterialOut(MaterialCreate):
 class MaterialVerify(BaseModel):
     status: str
     corrected_fields: dict | None = None
-

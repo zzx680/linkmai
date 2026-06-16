@@ -1,6 +1,6 @@
 # linkmai Backend
 
-FastAPI backend skeleton for the linkmai WeChat Mini Program.
+FastAPI backend for the linkmai WeChat Mini Program.
 
 Target production deployment:
 
@@ -16,20 +16,21 @@ WeChat Mini Program
 
 ## Current Scope
 
-This backend skeleton includes:
+This backend includes:
 
 - Health API
-- User API shape
-- Case API shape
-- Material API shape
-- Product/order API shape
+- Development login API with JWT auth
+- User, consent, case, material, product, order, payment persistence
+- Per-user case/material/order ownership checks
+- PostgreSQL SQLAlchemy models
+- Alembic initial migration
 - PostgreSQL schema draft
 - Environment config sample
+- API integration tests
 
 It does not yet include:
 
-- Real WeChat login exchange
-- Real PostgreSQL repository implementation
+- Production WeChat login credentials and rollout validation
 - Real OSS upload
 - Real WeChat Pay
 - OCR/AI workers
@@ -40,7 +41,7 @@ Create a virtual environment:
 
 ```bash
 cd /Users/charlie/Documents/linkmai/backend
-python3 -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
@@ -54,9 +55,32 @@ http://127.0.0.1:8000/health
 http://127.0.0.1:8000/docs
 ```
 
+Development login:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/users/login \
+  -H 'Content-Type: application/json' \
+  -d '{"code":"dev-user-1","nickname":"测试用户"}'
+```
+
+Use the returned token for protected APIs:
+
+```text
+Authorization: Bearer <access_token>
+```
+
 ## Database
 
-Schema draft:
+The app can auto-create local development tables when `DB_AUTO_CREATE=true` and `APP_ENV` is not `prod`.
+
+Migration:
+
+```bash
+cd /Users/charlie/Documents/linkmai/backend
+alembic upgrade head
+```
+
+Schema draft remains available:
 
 ```text
 backend/sql/schema.sql
@@ -64,3 +88,9 @@ backend/sql/schema.sql
 
 For production, use PostgreSQL 15+ on Aliyun ECS or Aliyun RDS. For MVP development, ECS-hosted PostgreSQL is acceptable. For production sensitive data, prefer RDS + encrypted disks + strict security group rules.
 
+## Tests
+
+```bash
+cd /Users/charlie/Documents/linkmai/backend
+.venv/bin/pytest -q
+```

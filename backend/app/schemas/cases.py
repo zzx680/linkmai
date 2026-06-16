@@ -43,3 +43,6 @@ class IntakeResult(BaseModel):
     next_action: str
     missing_materials: list[str]
 
+
+class CaseStatusUpdate(BaseModel):
+    status: str

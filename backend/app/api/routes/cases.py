@@ -1,65 +1,82 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
-from app.schemas.cases import CaseCreate, CaseOut, IntakeResult, IntakeSubmit
+from app.api.deps import get_current_user
+from app.db.models import Case, User
+from app.db.session import get_db
+from app.schemas.cases import CaseCreate, CaseOut, CaseStatusUpdate, IntakeResult, IntakeSubmit
+from app.services.cases import CaseService
 
 router = APIRouter()
 
-MOCK_USER_ID = UUID("00000000-0000-0000-0000-000000000001")
+
+def to_case_out(case: Case) -> CaseOut:
+    return CaseOut(
+        id=case.id,
+        user_id=case.user_id,
+        case_no=case.case_no,
+        title=case.title,
+        accident_time=case.accident_time,
+        accident_location=case.accident_location,
+        province=case.province,
+        city=case.city,
+        accident_type=case.accident_type,
+        responsibility_type=case.responsibility_type,
+        injury_level=case.injury_level,
+        has_insurance=case.has_insurance,
+        risk_level=case.risk_level,
+        status=case.status,
+        summary=case.summary,
+        created_at=case.created_at,
+        updated_at=case.updated_at,
+    )
 
 
 @router.get("", response_model=list[CaseOut])
-def list_cases() -> list[CaseOut]:
-    return [
-        CaseOut(
-            id=UUID("10000000-0000-0000-0000-000000000001"),
-            user_id=MOCK_USER_ID,
-            case_no="LM202606060001",
-            title="追尾事故 · 上海浦东",
-            accident_location="上海浦东",
-            risk_level="medium",
-            status="pending_material",
-            summary="责任已认定，对方全责，当前缺少医疗发票和病历。",
-        )
-    ]
+def list_cases(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> list[CaseOut]:
+    cases = CaseService(db).list_cases(current_user)
+    return [to_case_out(case) for case in cases]
 
 
 @router.post("", response_model=CaseOut)
-def create_case(payload: CaseCreate) -> CaseOut:
-    return CaseOut(
-        id=uuid4(),
-        user_id=MOCK_USER_ID,
-        case_no="LM202606060002",
-        **payload.model_dump(),
-    )
+def create_case(
+    payload: CaseCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> CaseOut:
+    case = CaseService(db).create_case(payload, current_user)
+    return to_case_out(case)
 
 
 @router.get("/{case_id}", response_model=CaseOut)
-def get_case(case_id: UUID) -> CaseOut:
-    return CaseOut(
-        id=case_id,
-        user_id=MOCK_USER_ID,
-        case_no="LM202606060001",
-        title="追尾事故 · 上海浦东",
-        accident_location="上海浦东",
-        risk_level="medium",
-        status="pending_material",
-        summary="当前案件存在材料不确定项，建议补充医疗发票、收入证明和护理天数。",
-    )
+def get_case(
+    case_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> CaseOut:
+    return to_case_out(CaseService(db).get_case(case_id, current_user))
+
+
+@router.patch("/{case_id}/status", response_model=CaseOut)
+def update_case_status(
+    case_id: UUID,
+    payload: CaseStatusUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> CaseOut:
+    return to_case_out(CaseService(db).update_status(case_id, payload.status, current_user))
 
 
 @router.post("/{case_id}/intake", response_model=IntakeResult)
-def submit_intake(case_id: UUID, payload: IntakeSubmit) -> IntakeResult:
-    high_risk_answers = {"伤情较重", "无保险", "对方拒绝提供"}
-    answers = {item.answer for item in payload.answers}
-    high_risk = bool(answers.intersection(high_risk_answers))
-
-    return IntakeResult(
-        case_id=case_id,
-        risk_level="high" if high_risk else "medium",
-        status="manual_review" if high_risk else "pending_material",
-        next_action="申请人工复核" if high_risk else "上传医疗发票和病历",
-        missing_materials=["医疗发票", "病历", "收入证明", "护理天数说明"],
-    )
-
+def submit_intake(
+    case_id: UUID,
+    payload: IntakeSubmit,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> IntakeResult:
+    return IntakeResult(**CaseService(db).submit_intake(case_id, payload, current_user))
