@@ -10,7 +10,7 @@
   width: 96rpx;
   height: 96rpx;
   border-radius: 16rpx;
-  background: #123d36;
+  background: #111111;
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -28,10 +28,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1rpx solid #edf1ef;
+  border-bottom: 1rpx solid #f0f0f5;
 }
 
 .profile-row:last-child {
   border-bottom: 0;
 }
-

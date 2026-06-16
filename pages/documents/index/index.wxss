@@ -17,15 +17,15 @@
 }
 
 .delivery-label {
-  color: #6b7471;
+  color: #888899;
   font-size: 24rpx;
 }
 
 .delivery-value {
   margin-top: 8rpx;
-  color: #123d36;
-  font-size: 32rpx;
-  font-weight: 820;
+  color: #111111;
+  font-size: 30rpx;
+  font-weight: 760;
 }
 
 .review-button {
@@ -34,17 +34,18 @@
 }
 
 .doc-card {
-  min-height: 150rpx;
-  margin-bottom: 18rpx;
-  padding: 26rpx;
+  min-height: 146rpx;
+  margin-bottom: 14rpx;
+  padding: 24rpx;
   display: flex;
   justify-content: space-between;
   gap: 22rpx;
 }
 
 .doc-name {
-  font-size: 32rpx;
-  font-weight: 800;
+  color: #111111;
+  font-size: 30rpx;
+  font-weight: 760;
 }
 
 .doc-desc {
@@ -55,7 +56,7 @@
 
 .material-state {
   margin-top: 14rpx;
-  color: #5e7f78;
+  color: #2563eb;
   font-size: 23rpx;
   font-weight: 700;
   line-height: 1.35;
@@ -70,7 +71,7 @@
 }
 
 .upload-button {
-  color: #123d36;
-  font-weight: 760;
+  color: #2563eb;
+  font-weight: 700;
   font-size: 24rpx;
 }
