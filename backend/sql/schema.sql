@@ -6,6 +6,7 @@ create table if not exists users (
   unionid text,
   phone_encrypted text,
   phone_hash text,
+  phone_masked text,
   nickname text,
   avatar_url text,
   status text not null default 'active',
@@ -192,4 +193,3 @@ create table if not exists audit_logs (
   user_agent text,
   created_at timestamptz not null default now()
 );
-

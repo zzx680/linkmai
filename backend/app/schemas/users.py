@@ -14,10 +14,22 @@ class UserCreate(UserBase):
     pass
 
 
+class LoginRequest(BaseModel):
+    code: str
+    nickname: str | None = None
+    phone_masked: str | None = None
+
+
 class UserOut(UserBase):
     id: UUID = Field(default_factory=uuid4)
     status: str = "active"
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class LoginOut(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserOut
 
 
 class ConsentCreate(BaseModel):
@@ -28,4 +40,3 @@ class ConsentCreate(BaseModel):
 class ConsentOut(ConsentCreate):
     granted: bool = True
     granted_at: datetime = Field(default_factory=datetime.utcnow)
-
