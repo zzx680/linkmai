@@ -7,7 +7,15 @@
     <button class="secondary-button small-button" bindtap="createCase">新建</button>
   </view>
 
-  <view wx:for="{{cases}}" wx:key="id" class="card case-row" bindtap="openCase">
+  <view wx:if="{{loading}}" class="card case-row">正在加载案件...</view>
+  <view wx:elif="{{error}}" class="danger-panel">{{error}}</view>
+  <view wx:elif="{{!cases.length}}" class="card empty-card">
+    <view class="section-title">暂无案件</view>
+    <view class="muted empty-copy">新建案件后，可以在这里跟踪处理结果。</view>
+    <button class="primary-button" bindtap="createCase">开始处理事故</button>
+  </view>
+
+  <view wx:else wx:for="{{cases}}" wx:key="id" class="card case-row" bindtap="openCase">
     <view class="row-top">
       <view>
         <view class="section-title">{{item.title}}</view>

@@ -4,16 +4,16 @@
 
 .report-title {
   margin-top: 10rpx;
-  color: #18211f;
-  font-size: 36rpx;
-  font-weight: 820;
+  color: #111111;
+  font-size: 34rpx;
+  font-weight: 760;
 }
 
 .amount {
   margin: 14rpx 0;
-  color: #123d36;
-  font-size: 54rpx;
-  font-weight: 860;
+  color: #111111;
+  font-size: 52rpx;
+  font-weight: 800;
 }
 
 .confidence-card {
@@ -26,20 +26,20 @@
 }
 
 .confidence-label {
-  color: #6b7471;
+  color: #888899;
   font-size: 24rpx;
 }
 
 .confidence-value {
   margin-top: 6rpx;
-  color: #123d36;
+  color: #2563eb;
   font-size: 42rpx;
-  font-weight: 860;
+  font-weight: 800;
 }
 
 .confidence-copy {
   flex: 1;
-  color: #6b7471;
+  color: #888899;
   line-height: 1.45;
   text-align: right;
 }
@@ -51,9 +51,9 @@
 
 .list-title {
   padding: 24rpx 0 6rpx;
-  color: #18211f;
-  font-size: 32rpx;
-  font-weight: 800;
+  color: #111111;
+  font-size: 30rpx;
+  font-weight: 700;
 }
 
 .claim-row {
@@ -62,7 +62,7 @@
   justify-content: space-between;
   gap: 18rpx;
   padding: 24rpx 0;
-  border-bottom: 1rpx solid #edf1ef;
+  border-bottom: 1rpx solid #f0f0f5;
 }
 
 .claim-row:last-child {
@@ -70,8 +70,9 @@
 }
 
 .claim-name {
-  font-size: 30rpx;
-  font-weight: 760;
+  color: #111111;
+  font-size: 28rpx;
+  font-weight: 700;
 }
 
 .claim-detail {
@@ -82,7 +83,7 @@
 
 .basis {
   margin-top: 12rpx;
-  color: #5e7f78;
+  color: #2563eb;
   font-size: 22rpx;
   line-height: 1.4;
 }
@@ -94,9 +95,9 @@
 
 .claim-amount {
   display: block;
-  color: #123d36;
-  font-size: 30rpx;
-  font-weight: 800;
+  color: #111111;
+  font-size: 28rpx;
+  font-weight: 760;
 }
 
 .evidence {
@@ -117,7 +118,7 @@
   grid-template-columns: 150rpx 1fr;
   gap: 16rpx;
   align-items: flex-start;
-  border-bottom: 1rpx solid #edf1ef;
+  border-bottom: 1rpx solid #f0f0f5;
   line-height: 1.4;
 }
 
@@ -126,12 +127,12 @@
 }
 
 .missing-name {
-  color: #123d36;
-  font-weight: 800;
+  color: #111111;
+  font-weight: 700;
 }
 
 .missing-impact {
-  color: #6b7471;
+  color: #888899;
 }
 
 .action-stack {

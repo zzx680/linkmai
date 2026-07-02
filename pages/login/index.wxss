@@ -11,15 +11,15 @@
   width: 112rpx;
   height: 112rpx;
   margin-bottom: 26rpx;
-  border-radius: 18rpx;
-  background: #123d36;
+  border-radius: 16rpx;
+  background: #111111;
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 32rpx;
   font-weight: 860;
-  box-shadow: 0 24rpx 56rpx rgba(18, 61, 54, 0.2);
+  box-shadow: 0 10rpx 28rpx rgba(0, 0, 0, 0.12);
 }
 
 .copy {
@@ -35,8 +35,8 @@
   min-height: 72rpx;
   display: flex;
   align-items: center;
-  color: #6b7471;
-  border-bottom: 1rpx solid #edf1ef;
+  color: #888899;
+  border-bottom: 1rpx solid #f0f0f5;
 }
 
 .auth-row:last-child {
@@ -48,7 +48,7 @@
   padding-top: 42rpx;
   display: flex;
   gap: 16rpx;
-  color: #6b7471;
+  color: #888899;
   line-height: 1.55;
   font-size: 24rpx;
 }
@@ -58,17 +58,16 @@
   width: 34rpx;
   height: 34rpx;
   margin-top: 4rpx;
-  border: 2rpx solid #b7c4bf;
+  border: 2rpx solid #c8cbd5;
   border-radius: 8rpx;
 }
 
 .checked {
-  border-color: #123d36;
-  background: #123d36;
+  border-color: #2563eb;
+  background: #2563eb;
 }
 
 .link {
-  color: #123d36;
+  color: #2563eb;
   font-weight: 760;
 }
-

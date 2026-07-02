@@ -5,7 +5,6 @@
 
 .paragraph {
   margin: 14rpx 0 28rpx;
-  color: #6b7471;
+  color: #888899;
   line-height: 1.6;
 }
-

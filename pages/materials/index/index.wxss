@@ -1,5 +1,5 @@
 .material-head {
-  margin-bottom: 30rpx;
+  margin-bottom: 24rpx;
 }
 
 .copy {
@@ -8,17 +8,19 @@
 }
 
 .group {
-  margin-bottom: 28rpx;
+  margin-bottom: 24rpx;
 }
 
 .group-title {
-  margin-bottom: 14rpx;
+  margin-bottom: 12rpx;
+  color: #888899;
+  font-size: 24rpx;
 }
 
 .material-card {
-  min-height: 142rpx;
-  margin-bottom: 14rpx;
-  padding: 24rpx;
+  min-height: 132rpx;
+  margin-bottom: 12rpx;
+  padding: 22rpx;
   display: flex;
   justify-content: space-between;
   gap: 22rpx;
@@ -27,10 +29,10 @@
 
 .material-card::before {
   content: "";
-  width: 6rpx;
-  height: 70rpx;
+  width: 4rpx;
+  height: 64rpx;
   border-radius: 999rpx;
-  background: #e1e7e4;
+  background: #2563eb;
   position: absolute;
   left: 0;
   top: 26rpx;
@@ -41,8 +43,9 @@
 }
 
 .material-name {
-  font-size: 30rpx;
-  font-weight: 760;
+  color: #111111;
+  font-size: 28rpx;
+  font-weight: 700;
 }
 
 .purpose {
@@ -60,9 +63,13 @@
 }
 
 .upload-button {
-  color: #123d36;
-  font-weight: 760;
+  color: #2563eb;
+  font-weight: 700;
   font-size: 24rpx;
+}
+
+.upload-button[disabled] {
+  color: #a0a0b0;
 }
 
 .danger-panel {

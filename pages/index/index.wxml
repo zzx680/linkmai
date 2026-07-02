@@ -1,17 +1,27 @@
 <view class="page home-page">
-  <view class="hero">
-    <view>
-      <text class="eyebrow">linkmai</text>
-      <view class="title">交通事故处理台</view>
+  <view class="topbar">
+    <view class="brand">
+      <view class="brand-mark">L</view>
+      <text>Linkmai</text>
     </view>
-    <view class="hero-mark">LM</view>
+    <text class="top-status">事故处理工作台</text>
   </view>
 
-  <view class="subcopy">
-    按一个案件推进：创建案件、上传材料、查看赔偿、生成处理材料。
+  <view class="hero card">
+    <view>
+      <text class="eyebrow">WORKBENCH</text>
+      <view class="title">交通事故处理台</view>
+      <view class="subcopy">
+        以案件为中心，完成材料、赔偿测算和处理文书。
+      </view>
+    </view>
+    <button class="primary-button hero-button" bindtap="startCase">新建案件</button>
   </view>
 
-  <view class="action-grid">
+  <view wx:if="{{loading}}" class="card state-card">正在加载处理台...</view>
+  <view wx:elif="{{error}}" class="danger-panel state-card">{{error}}</view>
+
+  <view wx:else class="action-grid">
     <button
       wx:for="{{mainActions}}"
       wx:key="label"
@@ -27,11 +37,11 @@
     </button>
   </view>
 
-  <view class="card current-card">
+  <view wx:if="{{!loading && !error && currentCase}}" class="card current-card">
     <view class="card-top">
       <view>
         <view class="section-title">当前案件</view>
-        <text class="muted case-plate">{{currentCase.plate}} · {{currentCase.status}}</text>
+        <text class="muted case-plate">{{currentCase.title}} · {{currentCase.plate}}</text>
       </view>
       <text class="pill risk-mid">风险 {{currentCase.riskLevel}}</text>
     </view>
@@ -44,7 +54,7 @@
     </view>
 
     <view class="next-box">
-      <text class="muted">下一步</text>
+      <text class="box-label">下一步</text>
       <view class="next-action">{{currentCase.nextAction}}</view>
       <view class="next-meta">
         <text class="muted">{{currentCase.nextActionTime}}</text>
@@ -57,6 +67,12 @@
     </view>
 
     <button class="secondary-button" bindtap="openCase">继续处理</button>
+  </view>
+
+  <view wx:if="{{!loading && !error && !currentCase}}" class="card empty-card">
+    <view class="section-title">暂无案件</view>
+    <view class="muted empty-copy">创建案件后，会在这里显示下一步、缺失材料和风险等级。</view>
+    <button class="primary-button" bindtap="startCase">开始处理事故</button>
   </view>
 
   <view class="warning-panel notice">

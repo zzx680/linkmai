@@ -7,7 +7,10 @@
     </view>
   </view>
 
-  <view class="card row-card">
+  <view wx:if="{{loading}}" class="card row-card state-card">正在加载...</view>
+  <view wx:elif="{{error}}" class="danger-panel state-card">{{error}}</view>
+
+  <view wx:else class="card row-card">
     <view
       wx:for="{{rows}}"
       wx:key="label"
@@ -20,4 +23,3 @@
     </view>
   </view>
 </view>
-

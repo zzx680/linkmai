@@ -14,12 +14,12 @@
   display: flex;
   justify-content: space-between;
   gap: 20rpx;
-  border-color: #e1e7e4;
+  border-color: #ebebf0;
 }
 
 .product-card.selected {
-  border-color: #123d36;
-  background: #f2f7f5;
+  border-color: #9dbfff;
+  background: #f8faff;
 }
 
 .badge-line {
@@ -27,8 +27,9 @@
 }
 
 .product-name {
-  font-size: 32rpx;
-  font-weight: 800;
+  color: #111111;
+  font-size: 30rpx;
+  font-weight: 760;
 }
 
 .included {
@@ -41,8 +42,8 @@
 .mini-tag {
   padding: 8rpx 12rpx;
   border-radius: 10rpx;
-  background: #edf3f1;
-  color: #123d36;
+  background: #f0f4ff;
+  color: #2563eb;
   font-size: 22rpx;
   font-weight: 700;
 }
@@ -55,9 +56,9 @@
 
 .product-price {
   min-width: 120rpx;
-  color: #123d36;
-  font-size: 32rpx;
-  font-weight: 860;
+  color: #111111;
+  font-size: 30rpx;
+  font-weight: 800;
   text-align: right;
 }
 
@@ -74,14 +75,14 @@
 }
 
 .limit-label {
-  color: #123d36;
+  color: #2563eb;
   font-size: 24rpx;
   font-weight: 800;
 }
 
 .limit-line {
   margin-top: 8rpx;
-  color: #6b7471;
+  color: #888899;
   line-height: 1.45;
 }
 

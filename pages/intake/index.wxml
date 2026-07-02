@@ -14,7 +14,9 @@
   <view class="question-card card">
     <view class="question-meta">
       <text class="pill">{{questions[step].type}}</text>
-      <button class="save-button" bindtap="saveDraft">保存草稿</button>
+      <button class="save-button" disabled="{{saving}}" bindtap="saveDraft">
+        {{saving ? '保存中' : '保存草稿'}}
+      </button>
     </view>
     <view class="section-title">{{questions[step].title}}</view>
     <view class="hint">{{questions[step].hint}}</view>
@@ -46,8 +48,8 @@
   </view>
 
   <view class="bottom-actions">
-    <button class="secondary-button" bindtap="prev">上一步</button>
-    <button class="primary-button" bindtap="next">
+    <button class="secondary-button" disabled="{{step === 0}}" bindtap="prev">上一步</button>
+    <button class="primary-button" disabled="{{!answers[step]}}" bindtap="next">
       {{step === questions.length - 1 ? '生成案件看板' : '继续'}}
     </button>
   </view>

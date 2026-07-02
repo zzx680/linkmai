@@ -12,24 +12,24 @@
 
 .intake-title {
   margin-top: 8rpx;
-  color: #18211f;
-  font-size: 38rpx;
-  font-weight: 820;
+  color: #111111;
+  font-size: 36rpx;
+  font-weight: 760;
   line-height: 1.18;
 }
 
 .bar {
-  height: 12rpx;
+  height: 10rpx;
   overflow: hidden;
   border-radius: 999rpx;
-  background: #e1e7e4;
+  background: #ebebf0;
   margin-bottom: 28rpx;
 }
 
 .bar-fill {
   height: 100%;
   border-radius: 999rpx;
-  background: #123d36;
+  background: #2563eb;
 }
 
 .question-card {
@@ -44,23 +44,24 @@
 }
 
 .save-button {
-  color: #5e7f78;
+  color: #2563eb;
   font-size: 24rpx;
   font-weight: 700;
 }
 
 .hint {
   margin-top: 14rpx;
-  color: #6b7471;
+  color: #888899;
   line-height: 1.5;
 }
 
 .why-box {
   margin-top: 22rpx;
   padding: 20rpx 22rpx;
-  border-radius: 14rpx;
-  background: #f4f8f6;
-  color: #35524c;
+  border: 1rpx solid #f0f0f5;
+  border-radius: 12rpx;
+  background: #fafafa;
+  color: #666677;
   font-size: 24rpx;
   line-height: 1.45;
 }
@@ -75,10 +76,10 @@
 .option {
   min-height: 92rpx;
   padding: 0 24rpx;
-  border: 1rpx solid #dce5e1;
-  border-radius: 14rpx;
+  border: 1rpx solid #e0e0e8;
+  border-radius: 12rpx;
   background: #ffffff;
-  color: #18211f;
+  color: #111111;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -89,22 +90,22 @@
 }
 
 .option-active {
-  border-color: #123d36;
-  background: #edf3f1;
-  color: #123d36;
+  border-color: #9dbfff;
+  background: #f0f4ff;
+  color: #2563eb;
 }
 
 .option-dot {
   width: 20rpx;
   height: 20rpx;
-  border: 2rpx solid #b7c4bf;
+  border: 2rpx solid #c8cbd5;
   border-radius: 50%;
 }
 
 .option-active .option-dot {
-  border-color: #123d36;
-  background: #123d36;
-  box-shadow: 0 0 0 6rpx rgba(18, 61, 54, 0.12);
+  border-color: #2563eb;
+  background: #2563eb;
+  box-shadow: 0 0 0 6rpx rgba(37, 99, 235, 0.12);
 }
 
 .answer-panel {
@@ -116,15 +117,15 @@
 }
 
 .answer-title {
-  color: #6b7471;
+  color: #888899;
   font-size: 24rpx;
 }
 
 .answer-chip {
   padding: 10rpx 14rpx;
   border-radius: 12rpx;
-  background: #edf3f1;
-  color: #123d36;
+  background: #f0f4ff;
+  color: #2563eb;
   font-size: 22rpx;
   font-weight: 700;
 }
